@@ -1,4 +1,4 @@
-# Change Log for PyZodipic
+# Change Log for pyZodipic
 
 ## Nov 20, 2021
 * Setting up Github page 
