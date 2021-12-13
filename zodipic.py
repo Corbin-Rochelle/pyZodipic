@@ -1,5 +1,14 @@
 #!/usr/bin/python
 import numpy
+import QabsCalc
+import hongphasefunction
+import stellarparam
+import temperaturecalc
+import xfullzodimodel
+import xscatteringzodimodel
+import xthermalzodimodel
+import xusermapzodimodel
+
 
 #pro zodipic, fnu, pixsize, lambda, inclination=inclination, radin=radin, $
 #    radout=radout, starname=starname, albedo=albedo, $
@@ -17,7 +26,7 @@ import numpy
 # based on a model of the solar zodiacal cloud
 # as seen by COBE
 
-# example:  make an image of the Solar system dust viewed 
+# example:  make an image of the Solar system dust viewed
 # edge-on by the HST NICMOS coronagraph from 10 pc, including
 # the earth ring & the dust bands, & put that image in fnu
 #  zodipic, fnu, 75, 1, /ring, /bands
@@ -28,14 +37,14 @@ import numpy
 # include the stellar flux in the center pixel
 #  zodipic, fnu, 137, 5, starname='Vega', inc=90, radout=10, /addstar
 
-# here's a model for Epsilon Eridani as in Greaves et al. 1998, ApJ, 506,L133 
+# here's a model for Epsilon Eridani as in Greaves et al. 1998, ApJ, 506,L133
 #zodipic, fnu, 400, 2.2, starname='Epsilon_Eridani', radin=35, radout=70, inc=25.0, zodis=67000.0
 
 # Also try:
 #zodipic, fnu, 75, 1.1, star='HR_4796', radout=100, inc=73.1, pos=26.8, radring=70.4, /nofan, /noiter, pixnum=64, ring=10000, offsety=3
 
-# * fnu is the output image, 
-#   each pixel contains a flux, in Jy 
+# * fnu is the output image,
+#   each pixel contains a flux, in Jy
 #   fnu is an array with dimensions pixnum x pixnum
 #   computation time goes as pixnum**3
 
@@ -52,7 +61,7 @@ import numpy
 #   | edit the code to add new ones
 #   the Sun at 10 pc  THIS IS THE DEFAULT
 #   starname='Alpha_Centauri_B' (the nearest KV star)
-#   starname='Epsilon_Eridani' (the nearest KV Keck can see) 
+#   starname='Epsilon_Eridani' (the nearest KV Keck can see)
 #   starname='Alpha_Centauri_A' (the nearest GV star other than the sun)
 #   starname='Tau_Ceti'    (the nearest GV Keck can see, other than the sun)
 #   starname='Procyon'     (the nearest FV star...Keck can see it)
@@ -79,7 +88,7 @@ import numpy
 # * distance is the distance to the observer, in pc
 #   setting starnum overrides this parameter
 
-# * Set addstar to add the stellar flux to the center pixel. 
+# * Set addstar to add the stellar flux to the center pixel.
 #   Approximates stellar spectrum as a blackbody
 
 # * Set zodis to the number of zodis you want, & I'll multiply the
@@ -101,14 +110,14 @@ import numpy
 # model, & increase the running time significantly.
 
 # * dustsize is the effective size of the dust grains, in microns
-#   Setting this parameter turns on a subroutine which 
+#   Setting this parameter turns on a subroutine which
 #   calculates the temperature of the dust grains
 #   by iteratively solving the thermal equilibrium equation.  For dust sizes
-#   greater than 3 microns, it solves it assuming p=q=2 (see Backman & Paresce 
+#   greater than 3 microns, it solves it assuming p=q=2 (see Backman & Paresce
 #   1993, in Protostars & Planets III).  For dust sizes less than 3 microns,
 #   it uses the appropriate absorption coefficient, Qabs, as calculated by
 #   the program Dusty (Ivezic, NenKova, & Elitzur 1999).  Dusty uses Mie Theory
-#   & optical constants for "astronomical silicate" as tabulated by Draine, B. 
+#   & optical constants for "astronomical silicate" as tabulated by Draine, B.
 #   & Lee, H. (1984) ApJ, 285, 89 to calculate Qabs.  It does not affect any
 #   other properties of the cloud (like optical depth).
 
@@ -141,25 +150,25 @@ import numpy
 
 # * Set userdustmap to have zodipic calculate the emission from a map
 #   of the dust distribution that you supply.  The dust density map should
-#   be passed to zodipic by calling the function with the keyword 
+#   be passed to zodipic by calling the function with the keyword
 #   userdustmap equal to the 3D array containing the dust
 #   distribution--units are arbitrary since the map will be scaled using
 #   scaletoflux.  NOTE: ZODIPIC calculates values for userdustmap in place,
 #   so it is a good idea to save userdustmap before running ZODIPIC!
 #   example:  IDL>map=intarr(500,500,500)
 #   IDL> zodipic, fnu, pixsize, lambda, userdustmap=map, /nodisplay
-#   If radin is specified along with userdustmap, the map will be 
-#   cleared within this radius.  If radin is not set, the map will 
-#   still be cleared within the dust sublimation radius. 
+#   If radin is specified along with userdustmap, the map will be
+#   cleared within this radius.  If radin is not set, the map will
+#   still be cleared within the dust sublimation radius.
 #   radout is ignored.  *does not yet handle scattered light*
-#   
+#
 #   scaletoflux is only (and must be) used in conjunction with userdustmap.
 #   Set scaletoflux equal to a 2-element array containing a flux value (in
 #   Jy) & a wavelength(in microns), eg
 #   zodipic,....,userdustmap=map, scaletoflux=[1.34,850]
 #   This tells zodipic to scale the total emission from the map to be
 #   consistent with a total flux of scaletoflux[0] at a wavelength of
-#   scaletoflux[1]. 
+#   scaletoflux[1].
 
 # Version 1 written 2/99 by
 # Marc J. Kuchner
@@ -171,7 +180,7 @@ import numpy
 # http://eud.gsfc.nasa.gov/Marc.Kuchner/home.html
 # Phone: (301)286-5165  FAX: (301)286-1752
 
-# revised 08/02 by Joannah Metz (jmetz@cfa.harvard.edu) & Sean Moran 
+# revised 08/02 by Joannah Metz (jmetz@cfa.harvard.edu) & Sean Moran
 # temperaturecalc added 3/02
 # userdustmap added 6/02 by Sean Moran (smm@astro.caltech.edu)
 
@@ -192,14 +201,14 @@ import numpy
 
 def zodipic():
    starname = ''
-   if (starname is not None): 
-      starname='Sun'
-      
+   if starname is not None:
+      starname = 'Sun'
+
    rstar, lstar, tstar, dist, gk, zk = stellarparam(starname)
-   if (dist is None): udist=dist
-   if (rstar is None): urstar=rstar
-   if (tstar is None): utstar=tstar
-   if (lstar is None): ulstar=lstar
+   if dist is None: udist=dist
+   if rstar is None: urstar=rstar
+   if tstar is None: utstar=tstar
+   if lstar is None: ulstar=lstar
 
    # The stellar parameters we're actually going to USE are
    # ulstar, udist, urstar & utstar
