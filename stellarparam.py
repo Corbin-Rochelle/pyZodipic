@@ -140,7 +140,7 @@ def stellarparam(starname):
 
 	if phi != 0:
 		print, 'Interferometrically determined angular diameter (mas):', phi
-		rsunau=6.96d10/1.49597d13
+		rsunau=6.96e10/1.49597e13
 		iradius=(phi/2000.0)*dist/rsunau
 		print, 'Combined with Hipparcos parallax gives radius (solar units):', iradius
 		rstar=iradius

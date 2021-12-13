@@ -212,47 +212,47 @@ def zodipic():
 
    # The stellar parameters we're actually going to USE are
    # ulstar, udist, urstar & utstar
-   print, 'Stellar Parameters'
-   print, 'Luminosity (Solar Lumin.):', ulstar, '  Distance (pc):', udist
-   print, 'Radius (Solar radii):', urstar, '  Temperature (K):', utstar
-   print, ' '
+   print('Stellar Parameters')
+   print('Luminosity (Solar Lumin.):', ulstar, '  Distance (pc):', udist)
+   print('Radius (Solar radii):', urstar, '  Temperature (K):', utstar)
+   print(' ')
 
    #***************Fundamantal Constants**********************
-   pi=3.141592
-   k=1.38066d-16
-   c=2.9979d10
-   h=6.62608d-27
-   sigma=5.6705d-5
-   l10=2.30259
+   pi = 3.141592
+   k = 1.38066e-16
+   c = 2.9979e10
+   h = 6.62608e-27
+   sigma = 5.6705e-5
+   l10 = 2.30259
 
    # tsolar is the effective temperature of the sun 
    tsolar=5770.0
    
    # radsolar is the radius of the sum in cm
-   radsolar=6.96d10
+   radsolar=6.96e10
    
    # lsolar is the solar luminosity in ergs/sec
-   lsolar=3.86d33
+   lsolar=3.86e33
    
    #*********************More Definitions********************
    # rstarcm is the radius of the star in cm
    rstarcm=radsolar*urstar
    
    # rstarau is the radius of the star in au
-   rstarau=rstarcm/1.49597d13
+   rstarau=rstarcm/1.49597e13
 
 # wavelength in microns, of all the various DIRBE bands
 # 0.5, 1.25, 2.2, 3.5, 4.9, 12.0, 25.0, 60.0, 100.0, 140.0, 240.0
-   if (radout is not None): radout=3.28
-   if (ring is not None): ring=0
-   if (blob is not None): blob=0
-   if (bands is not None): bands=0
-   if (radin is not None): radin=0.0
-   if (offsetx is not None): offsetx=0
-   if (offsety is not None): offsety=0
-   if (offsetz is not None): offsetz=0
-   if (positionangle is not None): positionangle=0
-   if (earthlong is not None): earthlong=0
+   if radout is not None: radout=3.28
+   if ring is not None: ring=0
+   if blob is not None: blob=0
+   if bands is not None: bands=0
+   if radin is not None: radin=0.0
+   if offsetx is not None: offsetx=0
+   if offsety is not None: offsety=0
+   if offsetz is not None: offsetz=0
+   if positionangle is not None: positionangle=0
+   if earthlong is not None: earthlong=0
 
    if (userdustmap is not None): 
        userdustmap = 0 
