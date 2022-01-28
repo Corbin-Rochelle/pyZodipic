@@ -45,9 +45,9 @@ def temperaturecalc(lstar, tstar, lambda0microns, rau, t, lambdaQabs, emit):
 	  tgrain=278.0
    #  Calculate stellar Planck spectrum Bnu (erg s**-1 cm**-2 ster**-1 Hz**-1)
 	  xb=h*nu/(kb*tstar)
-	  bnu=xb**3.0/(numpy.exp(xb)-1.0)   
-	  bnu=bnu*2.0*((kb*tstar)**3.0)/((c*h)**2.0)
-	  bnu[111]=0.0
+      bnu=xb**3.0/(numpy.exp(xb)-1.0)
+      bnu=bnu*2.0*((kb*tstar)**3.0)/((c*h)**2.0)
+      bnu[111]=0.0
 	  
    # efficiency of absorption
    # If the dust size is greater than 3 microns, the absorption is approximated

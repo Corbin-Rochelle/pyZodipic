@@ -6,47 +6,47 @@ Description of code here.
 '''
 
 
-def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda,radin, radout, pfunc500, Qabsuser, emit, lambdaQabs, albedo=albedo, ring, blob, earthlong, bands, nofan=nofan, offsetx, offsety, offsetz, iras=iras,scatterflag=scatterflag, useralpha=useralpha, userdelta=userdelta, scube=scube, radring=radring, userdustsize=userdustsize):
+def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in,radin, radout, pfunc500, Qabsuser, emit, lambdaQabs, albedo=albedo, ring, blob, earthlong, bands, nofan=nofan, offsetx, offsety, offsetz, iras=iras,scatterflag=scatterflag, useralpha=useralpha, userdelta=userdelta, scube=scube, radring=radring, userdustsize=userdustsize):
 
-   #fundamental constants
-   pi=3.1415926536
-   pi2=pi*2.0
-   kb=1.38066d-16
-   cc=2.9979d10
-   hp=6.62608d-27
-   sigma=5.6705d-5
-   l10=2.30259
+    #fundamental constants
+    pi=3.1415926536
+    pi2=pi*2.0
+    kb=1.38066e-16
+    cc=2.9979e10
+    hp=6.62608e-27
+    sigma=5.6705e-5
+    l10=2.30259
    
-   # DIRBE
-   # Smooth Cloud
-   alpha = 1.34
-   beta = 4.14
-   gamma = 0.942
-   delta=0.467
-   T0=286.0
-   mu=0.189
-   #<n sigma> in AU**-1 measured at the Earth
-   n0=1.13d-7
-   al=0.18  # so sky brightness near the poles
-   em=1
+    # DIRBE
+    # Smooth Cloud
+    alpha = 1.34
+    beta = 4.14
+    gamma = 0.942
+    delta=0.467
+    T0=286.0
+    mu=0.189
+    #<n sigma> in AU**-1 measured at the Earth
+    n0=1.13e-7
+    al=0.18  # so sky brightness near the poles
+    em=1
    
-   if userdustsize == None:
-	  if userdustsize > 3: 
-		 lambda0=userdustsize*10
-		 em=(lambda0/lambda)**2 < 1.0
-	  else:
-		 em=Qabsuser(0)
-   else:
-	   em=(280.0/(280.0+lambda))+((2.2-0.45*lambda) > 0)
+    if userdustsize == None:
+        if userdustsize > 3:
+            lambda0=userdustsize*10
+            em=(lambda0/lambda_in)**2 < 1.0
+        else:
+            em=Qabsuser(0)
+    else:
+        em=(280.0/(280.0+lambda_in))+((2.2-0.45*lambda_in) > 0)
    
-   if iras == None:
+    if iras == None:
    # Old J Good
-	  alpha=1.803
-	  beta=4.973
-	  gamma=1.265
-	  T0=266.20
-	  delta=0.359
-	  n0=2.1527e-7
+        alpha=1.803
+        beta=4.973
+        gamma=1.265
+        T0=266.20
+        delta=0.359
+        n0=2.1527e-7
    
    if useralpha == None: 
 	  alpha=useralpha
