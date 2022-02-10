@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import numpy
+import scipy
 import QabsCalc
 import hongphasefunction
 import stellarparam
@@ -11,7 +12,7 @@ import xusermapzodimodel
 
 
 #pro zodipic, fnu, pixsize, lambda, inclination=inclination, radin=radin, $
-#    radout=radout, starname=starname, albedo=albedo, $
+#    radout=radout, starname=starname, albedo=albedo,
 #    isotropic=isotropic, nodisplay=nodisplay, distance=dist, $
 #    addstar=addstar, zodis=zodis, ring=ring, blob=blob, $
 #    earthlong=earthlong, bands=bands, nofan=nofan, $
@@ -200,149 +201,146 @@ import xusermapzodimodel
 
 
 def zodipic():
-   starname = ''
-   if starname is not None:
-      starname = 'Sun'
+    starname = ''
+    if starname is not None:
+        starname = 'Sun'
 
-   rstar, lstar, tstar, dist, gk, zk = stellarparam(starname)
-   if dist is None: udist=dist
-   if rstar is None: urstar=rstar
-   if tstar is None: utstar=tstar
-   if lstar is None: ulstar=lstar
+    rstar, lstar, tstar, dist, gk, zk = stellarparam(starname)
+    if dist is None: udist=dist
+    if rstar is None: urstar=rstar
+    if tstar is None: utstar=tstar
+    if lstar is None: ulstar=lstar
 
    # The stellar parameters we're actually going to USE are
    # ulstar, udist, urstar & utstar
-   print('Stellar Parameters')
-   print('Luminosity (Solar Lumin.):', ulstar, '  Distance (pc):', udist)
-   print('Radius (Solar radii):', urstar, '  Temperature (K):', utstar)
-   print(' ')
+    print('Stellar Parameters')
+    print('Luminosity (Solar Lumin.):', ulstar, '  Distance (pc):', udist)
+    print('Radius (Solar radii):', urstar, '  Temperature (K):', utstar)
+    print(' ')
 
    #***************Fundamantal Constants**********************
-   pi = 3.141592
-   k = 1.38066e-16
-   c = 2.9979e10
-   h = 6.62608e-27
-   sigma = 5.6705e-5
-   l10 = 2.30259
+    k = 1.38066e-16
+    sigma = 5.6705e-5
+    l10 = 2.30259
 
    # tsolar is the effective temperature of the sun 
-   tsolar=5770.0
+    tsolar=5770.0
    
    # radsolar is the radius of the sum in cm
-   radsolar=6.96e10
+    radsolar=6.96e10
    
    # lsolar is the solar luminosity in ergs/sec
-   lsolar=3.86e33
+    lsolar=3.86e33
    
    #*********************More Definitions********************
    # rstarcm is the radius of the star in cm
-   rstarcm=radsolar*urstar
+    rstarcm=radsolar*urstar
    
    # rstarau is the radius of the star in au
-   rstarau=rstarcm/1.49597e13
+    rstarau=rstarcm/1.49597e13
 
 # wavelength in microns, of all the various DIRBE bands
 # 0.5, 1.25, 2.2, 3.5, 4.9, 12.0, 25.0, 60.0, 100.0, 140.0, 240.0
-   if radout is not None: radout=3.28
-   if ring is not None: ring=0
-   if blob is not None: blob=0
-   if bands is not None: bands=0
-   if radin is not None: radin=0.0
-   if offsetx is not None: offsetx=0
-   if offsety is not None: offsety=0
-   if offsetz is not None: offsetz=0
-   if positionangle is not None: positionangle=0
-   if earthlong is not None: earthlong=0
+    if radout is not None: radout=3.28
+    if ring is not None: ring=0
+    if blob is not None: blob=0
+    if bands is not None: bands=0
+    if radin is not None: radin=0.0
+    if offsetx is not None: offsetx=0
+    if offsety is not None: offsety=0
+    if offsetz is not None: offsetz=0
+    if positionangle is not None: positionangle=0
+    if earthlong is not None: earthlong=0
 
-   if (userdustmap is not None): 
-       userdustmap = 0 
-       scaletoflux = 0
-   else:
+    if (userdustmap is not None):
+        userdustmap = 0
+        scaletoflux = 0
+    else:
    # if we are using a dust density map, then iterating is useless
       noiterate = 1
       zodis = 1.0 #want to make sure we dont mess up the scaling
 
 
-   if (userdustmap is None) and (len(scaletoflux) != 2):
-      print, ' '
-      print, 'To use the userdustmap feature, please set scaletoflux, a two element vector'
-      print, 'containing the desired total flux from the cloud & a fiducial wavelength.'
-      print, 'I.e. scaletoflux=[desired cloud flux in Jy, wavelength in microns]'
-      print, ' '
+    if (userdustmap is None) and (len(scaletoflux) != 2):
+        print('''\n
+        To use the userdustmap feature, please set scaletoflux, a two element vector\n
+        containing the desired total flux from the cloud & a fiducial wavelength.\n
+        I.e. scaletoflux=[desired cloud flux in Jy, wavelength in microns]\n
+        ''')
 
-   useralpha=0
-   if (alpha is None):
-       useralpha=alpha
-       print, 'Alpha=', useralpha
+    useralpha=0
+    if (alpha is None):
+        useralpha=alpha
+        print('Alpha=', useralpha)
        
-   userdelta=0
-   userdustsize=0
-   if (dustsize is None):
-       userdustsize=dustsize
-       print, 'Effective size of dust grains=', userdustsize
+    userdelta=0
+    userdustsize=0
+    if (dustsize is None):
+        userdustsize=dustsize
+        print('Effective size of dust grains=', userdustsize)
     else:
        if (delta is None):
            userdelta=delta
            print, 'Delta=', userdelta
            
 # assume no oversampling
-   oversample=1.0  
+    oversample=1.0
 
 # upixnum is the number of pixels we're actually going to use
-   if (pixnum is None):
-       if pixnum/16.0 != fix(pixnum/16.0):
-           print, ' '
-           print, 'Please set pixnum to a multiple of 16.'
-           print, ' '
+    if (pixnum is None):
+        if pixnum/16.0 != int(pixnum/16.0):
+            print('''\n
+            Please set pixnum to a multiple of 16.\n
+            ''')
    # do not allow user to use fewer than 112 pixels in the model
    # even if the output is to be smaller than that
-       if pixnum < 112.0: 
-          oversample=fix(112.0/pixnum)+1
-       upixnum=pixnum*oversample
-    else:
+        if pixnum < 112.0:
+            oversample=int(112.0/pixnum)+1
+        upixnum=pixnum*oversample
+        else:
        # default grid size
-       pixnum=144
-       upixnum=144
+            pixnum=144
+            upixnum=144
 
 #if using a dustmap, then adjust its size to match upixnum
-   if (userdustmap is None):
-       tot = total(userdustmap)
-       mapsize = size(userdustmap, /dimensions)
-       userdustmap = congrid(userdustmap, upixnum, upixnum, upixnum)##NNED TO FIXXXXXXXXX
+    if (userdustmap is None):
+        tot = sum(userdustmap)
+        mapsize = len(userdustmap, /dimensions)
+        userdustmap = congrid(userdustmap, upixnum, upixnum, upixnum)##NNED TO FIXXXXXXXXX
        #making sure the total number density remains the same
-       userdustmap = userdustmap*tot/total(userdustmap)
-       pixsize = pixsize*mapsize[0]/pixnum
+        userdustmap = userdustmap*tot/sum(userdustmap)
+        pixsize = pixsize*mapsize[0]/pixnum
 
-   print, 'The internal matrix will be', fix(upixnum), ' by', fix(upixnum)
-   print, 'The output matrix will be', pixnum, ' by', pixnum
+    print('The internal matrix will be', int(upixnum), ' by', int(upixnum))
+    print('The output matrix will be', pixnum, ' by', pixnum)
    
-   upixnum=float(upixnum)
-   num=upixnum/2.0
-   gum=num-1
-   pixsize=float(pixsize)
-   radin=float(radin)
+    upixnum=float(upixnum)
+    num=upixnum/2.0
+    gum=num-1
+    pixsize=float(pixsize)
+    radin=float(radin)
    radout=float(radout)
    stepau=pixsize*udist/(1000.0*oversample)
 
    if 1.415*num*stepau < radin :
-       print, ' '
-       print, '*************************************************'
-       print,"    You are looking into the disk's central hole."
-       print, '*************************************************'
-       print, ' '
+       print('''\n'
+        *************************************************\n
+           You are looking into the disk's central hole.\n
+        *************************************************\n
+        \n''')
    
    
    if num*stepau > 3.0*radout :
-       print, ' '
-       print, '*************************************************'
-       print,'    The disk is much smaller than the frame.'
-       print, '*************************************************'
-       print, ' '
+       print('''\n'
+        *************************************************\n
+           The disk is much smaller than the frame.\n
+        *************************************************\n
+        \n''')
 
    #l0 is the wavelength, in cm
-   lambda=float(lambda)
-   l0= lambda*1e-4
-   print, 'Wavelength in microns: ', lambda
+   lambda_in=float(lambda_in)
+   l0= lambda_in*1e-4
+   print('Wavelength in microns: ', lambda_in)
 
    # add scattered light if the wavelength is less than this value (in microns)
    scatterwavelength=4.2 # microns
@@ -361,7 +359,7 @@ def zodipic():
    restore, 'QabsVars.dat'#################FIX
 
    if (userdustsize is None) :
-       print, 'Finding the radius the dust sublimates.'
+       print('Finding the radius the dust sublimates.')
        # start at a little beyond two times the sublimation radius of a blackbody
        logsubrau=numpy.log10(2.1*(ulstar**0.5)*(T0/tsublime)**2.0)
        rok=0
@@ -412,14 +410,14 @@ def zodipic():
    print, 'Synthesizing an image of a Solar type zodiacal cloud x', zodis
    # Worry about whether the dust will be destroyed by mutual collisons
    alpha = 1.34
-   n0=1.13d-7
+   n0=1.13e-7
    ep=1.5-alpha
    if (userdustsize is None):
-       dustsizecm=dustsize*1d-4 
+       dustsizecm=dustsize*1e-4
    else:
-       dustsizecm = (5.0e-4.0) # 5 microns in diameter
+       dustsizecm = (5.0e-4) # 5 microns in diameter
    dustdensity=3.5 # grams per cc
-   dustpar=3.55d-8/(dustsizecm*dustdensity)
+   dustpar=3.55e-8/(dustsizecm*dustdensity)
 #  Assume dust traverses the scale height of the disk twice per revolution,
 # a is the heliocentric distance, & tau is the optical depth traversed
 # by a dust particle since it was created at radout.
@@ -434,25 +432,25 @@ def zodipic():
    freepathpar=dustpar*ep/(0.1*n0*zodis)
    if freepathpar <= radout**ep :
       rcoll=(radout**ep-freepathpar)**(1.0/ep)
-      print, ' '
-      print, 'Heliocentric distance',1.0d4*dustsizecm
-           'micron radius dust particle will be detroyed on its way in by a collision with another grain:', rcoll, ' AU'
+      print(' ')
+      print('Heliocentric distance',1.0e4*dustsizecm)
+      print('micron radius dust particle will be detroyed on its way in by a collision with another grain:', rcoll, ' AU')
          if radin < rcoll: 
-              print, 'You might want to truncate the disk at this inner radius.'
+              print('You might want to truncate the disk at this inner radius.')
    else:
       rcoll=0.0
       
    print, 'Step size=', stepau, ' AU'
    
    if (inclination is None):
-      print, 'Inclination:', inclination, ' degrees from face-on'
+      print('Inclination:', inclination, ' degrees from face-on')
       inclination=float(inclination)
    else:
       inclination=0.0
    
    if (nofan is None) :
        if ring == 0 & bands == 0 :
-           print, 'You selected nofan & turned off the bands & the rings# there will be no dust.'
+           print('You selected nofan & turned off the bands & the rings# there will be no dust.')
            zodis=0 # make sure there's no dust
         
 #************************************************************
@@ -462,9 +460,9 @@ def zodipic():
    if lambda < scatterwavelength :
       scatterflag=1
    if (isotropic is None) :
-       pfunc500=numpy.zeroes(500)+1.0/(4.0*pi)
+       pfunc500=numpy.zeroes(500)+1.0/(4.0*numpy.pi)
     else:
-       print, 'Calculating phase function.'
+       print('Calculating phase function.')
    # calculate the phase function for our zodiacal cloud
    # use the information in Hong, S.S. 1985, A&A, 146, 67 & the fact that
    # our zodi has alpha near 1.35
@@ -486,7 +484,7 @@ def zodipic():
 # minpix had better be less than upixnum!
 # after one iteration there are radin/stepau steps
 # after maxi iterations, there are iterfactor**maxi times as many
-   maxi = fix(numpy.log10(minpix*stepau/radin)/numpy.log10(iterfactor))+1.0
+   maxi = int(numpy.log10(minpix*stepau/radin)/numpy.log10(iterfactor))+1.0
 
 # don't iterate if the user asks you not to
    if (noiterate is None): 
@@ -497,14 +495,14 @@ def zodipic():
 # larger scales with each iteration.
 # how much we are magnifying by 
       magfactor=iterfactor**(maxi-i)
-      print, ' '
-      print, 'Iteration ', i, ' out of ', fix(maxi)
-      print, 'magnification x', fix(magfactor)
+      print(' ')
+      print('Iteration ', i, ' out of ', int(maxi))
+      print('magnification x', int(magfactor))
 
 # first shrink whatever we had from last iteration 
 # to our new larger scale
       if i > 1 :
-         fnuold=rebin(fnu,upixnum/iterfactor,upixnum/iterfactor)  # i couldn't resist the pun
+         fnuold=scipy.rebin(fnu,upixnum/iterfactor,upixnum/iterfactor)  # i couldn't resist the pun
 
 # then go get a new image 
 # if we are on the smallest iteration, don't leave a hole
@@ -514,7 +512,7 @@ def zodipic():
 
 #shortcut allows you to use faster models for special position angles
       shortcut=0
-      if ((positionangle mod 90) == 0): 
+      if ((positionangle numpy.mod 90) == 0):
          shortcut=1
 #----------ZEROTH CASE
 #this is tailored to handle the case where you supply zodipic with the
@@ -560,9 +558,9 @@ def zodipic():
 
 # Compute total flux from this iteration, in Jy
       if (scaletoflux is not None): #since scaletoflux already in Jy
-         fnuit = total(fnu)*1d23*((pixsize/oversample)/(magfactor*1000.0*206265.0))**2.0
+         fnuit = sum(fnu)*1e23*((pixsize/oversample)/(magfactor*1000.0*206265.0))**2.0
       else: 
-         fnuit = total(fnu)
+         fnuit = sum(fnu)
       print, 'Flux added this iteration:', fnuit 
       # add the old image to the new image
       if i > 1:
@@ -573,17 +571,17 @@ def zodipic():
 
    if (scaletoflux is not None): 
     # Convert disk surface brightness from cgs to Jy/ster
-       fnu=fnu*1d23
+       fnu=fnu*1e23
     # now convert that to Jy
        fnu=fnu*((pixsize/oversample)/(1000.0*206265.0))**2.0
        fnu=fnu*zodis
 
-   fdisk=total(fnu)
+   fdisk=sum(fnu)
    print, 'Total flux (Jy):', fdisk
 
 # if we oversampled, bin back down
    if upixnum != pixnum :
-       fnu=rebin(fnu, pixnum, pixnum)
+       fnu=scipy.rebin(fnu, pixnum, pixnum)
        fnu=fnu*fdisk/total(fnu)   # make sure that the total flux is correct
 
 
@@ -593,13 +591,13 @@ def zodipic():
 
 #Calculate flux from star from Planck spectrum 
 # Bnu (erg s**-1 cm**-2 ster**-1 Hz**-1)
-   nu = c/l0
-   xb=h*nu/(k*utstar)
+   nu = scipy.c/l0
+   xb=scipy.h*nu/(k*utstar)
    bnu=xb**3.0/(numpy.exp(xb)-1.0)
-   bnu=bnu*2.0*((k*utstar)**3.0)/((c*h)**2.0)
+   bnu=bnu*2.0*((k*utstar)**3.0)/((scipy.c*scipy.h)**2.0)
 
    distcm=udist* (3.085678e18.0) # distance to star in cm
-   fstar = 1e23 * pi * bnu * ((rstarcm/distcm)**2.0)
+   fstar = 1e23 * numpy.pi * bnu * ((rstarcm/distcm)**2.0)
    
    index=-1
    # Add star to the image, if required
@@ -611,10 +609,10 @@ def zodipic():
            fnu[num-1,num]=fnu[num-1,num]+fstar/4.0
            fnu[num,num]=fnu[num,num]+fstar/4.0
            print, 'The Stellar flux has been divided evenly among pixels'
-           print, fix(num-1), ',', fix(num-1)
-           print, fix(num), ',', fix(num-1)
-           print, fix(num-1), ',', fix(num)
-           print, fix(num), ',', fix(num)
+           print, int(num-1), ',', int(num-1)
+           print, int(num), ',', int(num-1)
+           print, int(num-1), ',', int(num)
+           print, int(num), ',', int(num)
 
    print, 'Stellar flux', fstar, ' Jy'
    if (fstar != 0):
@@ -636,8 +634,8 @@ def zodipic():
    endcase
 
    if pixnum < 600 & (nodisplay is not None) :
-      pic=rebin(fnu, pixnum*rfactor, pixnum*rfactor, /sample)
-      sz=size(pic)
+      pic=scipy.rebin(fnu, pixnum*rfactor, pixnum*rfactor, /sample)
+      sz=len(pic)
       pic=rotate(pic,2)  # to make North up in the display
    
    #DISPLAY

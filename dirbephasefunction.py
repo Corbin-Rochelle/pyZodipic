@@ -1,5 +1,5 @@
 import numpy
-pro dirbephasefunction, band, pfunc
+#pro dirbephasefunction, band, pfunc
 
 # output a tabuated phasefunction, pfunc, for use in
 # xscatteringzodimodel and

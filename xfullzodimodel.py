@@ -6,7 +6,7 @@ Description of code here.
 '''
 
 
-def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in,radin, radout, pfunc500, Qabsuser, emit, lambdaQabs, albedo=albedo, ring, blob, earthlong, bands, nofan=nofan, offsetx, offsety, offsetz, iras=iras,scatterflag=scatterflag, useralpha=useralpha, userdelta=userdelta, scube=scube, radring=radring, userdustsize=userdustsize):
+def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in, radin, radout, pfunc500, Qabsuser, emit, lambdaQabs, albedo, ring, blob, earthlong, bands, nofan, offsetx, offsety, offsetz, iras,scatterflag, useralpha, userdelta, scube, radring, userdustsize):
 
     #fundamental constants
     pi=3.1415926536
@@ -48,7 +48,7 @@ def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in,ra
         delta=0.359
         n0=2.1527e-7
    
-   if useralpha == None: 
+    if useralpha == None:
 	  alpha=useralpha
    if userdelta == None:
 	  delta=userdelta
@@ -59,7 +59,7 @@ def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in,ra
    
    # ***************************************************************
    #  Solar Ring
-   nsr=1.83d-8
+   nsr=1.83e-8
    rsr=1.03
    if radring == None: 
 	  rsr=radring
@@ -67,29 +67,29 @@ def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in,ra
    sigrsr2=2.0*sigrsr*sigrsr
    sigzsr=0.054*rsr/1.03  # make the height of the ring scale with the radius
    # Trailing Blob
-   ntb=1.9d-8
+   ntb=1.9e-8
    rtb=1.06*rsr/1.03  # make the location of the blob scale with the ring
    sigrtb=0.10*rsr/1.03  # make width of blob scale with the ring
    sigrtb2=2.0*sigrtb*sigrtb
    sigztb=0.091*rsr/1.03  # make height of the blob scale with the ring
-   heltb=-10.0*pi/180.0  # converted to radians
-   sigheltb=12.1*pi/180.0  # converted to radians
+   heltb=-10.0*numpy.pi/180.0  # converted to radians
+   sigheltb=12.1*numpy.pi/180.0  # converted to radians
    sigheltb2=sigheltb*sigheltb
    
    #***************************************************************
    # Dust bands
    nb1=5.59e-10
-   delb1=8.78*pi/180.0
+   delb1=8.78*numpy.pi/180.0
    vb1=0.10
    pb1=4.0
    rcut1=1.5
    nb2=1.99e-9
-   delb2=1.99*pi/180.0
+   delb2=1.99*numpy.pi/180.0
    vb2=0.90
    pb2=4.0
    rcut2=0.94
    nb3=1.44e-10
-   delb3=15.0*pi/180.0
+   delb3=15.0*numpy.pi/180.0
    vb3=0.05
    pb3=4.0
    rcut3=1.5
@@ -110,7 +110,7 @@ def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in,ra
    gum=num-1
    
    #l0 is the wavelength, in cm
-   l0= lambda*1e-4
+   l0= lambda_in*1e-4
    
    # some math we can do now to make the Bnu calculation faster 
    chk=2.0*(kb**3.0)/((cc*hp)**2.0)
@@ -130,7 +130,7 @@ def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in,ra
    deltaz=offsetz/stepau
    
    # make sure earthlong is between 0 & 2*pi
-   earthlong=(earthlong*pi/180.0) mod pi2
+   earthlong=(earthlong*numpy.pi/180.0) numpy.mod pi2
    if earthlong < 0: 
 	  earthlong = earthlong + pi2
    
@@ -138,18 +138,18 @@ def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in,ra
    xb=hnuok/tstar
    bnus=(tstar**3.0)*chk*xb**3.0/(numpy.exp(xb)-1.0)
    
-   starfactor=pi * bnus * rstarau*rstarau/(stepau*stepau)
+   starfactor=numpy.pi * bnus * rstarau*rstarau/(stepau*stepau)
    
    #**********************************************************
    # Make some geometrical calulations 
-   print, 'Doing some geometry'
+   print('Doing some geometry')
    
-   c0=cos(pos*pi/180.0 )
-   s0=sin(pos*pi/180.0 )
-   c1=cos(inc*pi/180.0)
-   s1=sin(inc*pi/180.0)
-   c2=cos(0.5*pi + earthlong)
-   s2=sin(0.5*pi + earthlong)
+   c0=numpy.cos(pos*numpy.pi/180.0 )
+   s0=numpy.sin(pos*numpy.pi/180.0 )
+   c1=numpy.cos(inc*numpy.pi/180.0)
+   s1=numpy.sin(inc*numpy.pi/180.0)
+   c2=numpy.cos(0.5*numpy.pi + earthlong)
+   s2=numpy.sin(0.5*numpy.pi + earthlong)
    
    inu=numpy.zeroes(num2, num2)
    
@@ -187,7 +187,7 @@ def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in,ra
    trans2=-(s0*c1*s2 - c0*c2)*yarray + s1*s2*zarray + s2*deltax +c2*deltay
    trans3=s0*s1*yarray + c1*zarray+deltaz
    
-   print, 'Calculating azimuthally symmetric factors.'
+   print('Calculating azimuthally symmetric factors.')
    zetas=numpy.arange(1001)/1000.0   # zeta goes from 0 to 1 in steps of 0.001 
    if iras == None:
 	  azimuthterms=numpy.exp(-beta*(zetas**gamma))  # use for IRAS
@@ -207,7 +207,7 @@ def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in,ra
    print, 'Countdown'
    #*****************************************************************
    for i in range(0, num2):
-	  count=fix(((num2-1)-i)/10.0)
+	  count=int(((num2-1)-i)/10.0)
 	  if ((num2-1)-i)/10.0 == count: 
 		 print, -count
 	  x=i+0.5-num
@@ -219,7 +219,7 @@ def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in,ra
 	  rsteps=costheta+x*x+yarray*yarray > 1e-8   # actually this is rsteps squared
    # grab the local starlight while we have rsteps squared
 	  starlight=starfactor/rsteps  # like I said, it's really rsteps**2
-	  rsteps=sqrt(rsteps) > 1e-8    #  ah there we go...now it's rsteps
+	  rsteps=numpy.sqrt(rsteps) > 1e-8    #  ah there we go...now it's rsteps
 	  costheta=zarray/rsteps < 0.999999 # now we have the cosine of scattering angle
    
 	  x3=(c0*c1*c2 - s0*s2)*x + trans1
@@ -245,9 +245,9 @@ def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in,ra
    # Add the Earth Blob
    # no inclination | delta
    # We're going to need this angle
-		 deltahel=atan(y3,x3)
+		 deltahel=numpy.atan(y3,x3)
 		 dhel=heltb-deltahel
-		 places=(dhel > pi).nonzero()	#
+		 places=(dhel > numpy.pi).nonzero()	#
 		 places = places[0]
 	  if places[0] != -1: dhel(places)=dhel(places) - pi2
 		 nd=nd+blob*ntb*numpy.exp(-(((raut-rtb)**2.0)/(sigrtb2)+zaut/sigztb+(dhel*dhel/(2.0*sigheltb2)) ))
