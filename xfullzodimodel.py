@@ -49,155 +49,155 @@ def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in, r
         n0=2.1527e-7
    
     if useralpha == None:
-	  alpha=useralpha
-   if userdelta == None:
-	  delta=userdelta
-   if albedo == None: 
-	  al=albedo
-   if scube not None:
-	  scube=0
+        alpha=useralpha
+    if userdelta == None:
+        delta=userdelta
+    if albedo == None:
+        al=albedo
+    if scube != None:
+        scube=0
    
    # ***************************************************************
    #  Solar Ring
-   nsr=1.83e-8
-   rsr=1.03
-   if radring == None: 
-	  rsr=radring
-   sigrsr=0.025*rsr/1.03  # make width of ring scale with the radius
-   sigrsr2=2.0*sigrsr*sigrsr
-   sigzsr=0.054*rsr/1.03  # make the height of the ring scale with the radius
+    nsr=1.83e-8
+    rsr=1.03
+    if radring == None:
+        rsr=radring
+    sigrsr=0.025*rsr/1.03  # make width of ring scale with the radius
+    sigrsr2=2.0*sigrsr*sigrsr
+    sigzsr=0.054*rsr/1.03  # make the height of the ring scale with the radius
    # Trailing Blob
-   ntb=1.9e-8
-   rtb=1.06*rsr/1.03  # make the location of the blob scale with the ring
-   sigrtb=0.10*rsr/1.03  # make width of blob scale with the ring
-   sigrtb2=2.0*sigrtb*sigrtb
-   sigztb=0.091*rsr/1.03  # make height of the blob scale with the ring
-   heltb=-10.0*numpy.pi/180.0  # converted to radians
-   sigheltb=12.1*numpy.pi/180.0  # converted to radians
-   sigheltb2=sigheltb*sigheltb
+    ntb=1.9e-8
+    rtb=1.06*rsr/1.03  # make the location of the blob scale with the ring
+    sigrtb=0.10*rsr/1.03  # make width of blob scale with the ring
+    sigrtb2=2.0*sigrtb*sigrtb
+    sigztb=0.091*rsr/1.03  # make height of the blob scale with the ring
+    heltb=-10.0*numpy.pi/180.0  # converted to radians
+    sigheltb=12.1*numpy.pi/180.0  # converted to radians
+    sigheltb2=sigheltb*sigheltb
    
    #***************************************************************
    # Dust bands
-   nb1=5.59e-10
-   delb1=8.78*numpy.pi/180.0
-   vb1=0.10
-   pb1=4.0
-   rcut1=1.5
-   nb2=1.99e-9
-   delb2=1.99*numpy.pi/180.0
-   vb2=0.90
-   pb2=4.0
-   rcut2=0.94
-   nb3=1.44e-10
-   delb3=15.0*numpy.pi/180.0
-   vb3=0.05
-   pb3=4.0
-   rcut3=1.5
-   rcut120=rcut1**20.0
-   rcut220=rcut2**20.0
-   rcut320=rcut3**20.0
-   delb16=delb1**6.0
-   delb26=delb2**6.0
-   delb36=delb3**6.0
-   delb14=delb1**4.0
-   delb24=delb2**4.0
-   delb34=delb3**4.0
+    nb1=5.59e-10
+    delb1=8.78*numpy.pi/180.0
+    vb1=0.10
+    pb1=4.0
+    rcut1=1.5
+    nb2=1.99e-9
+    delb2=1.99*numpy.pi/180.0
+    vb2=0.90
+    pb2=4.0
+    rcut2=0.94
+    nb3=1.44e-10
+    delb3=15.0*numpy.pi/180.0
+    vb3=0.05
+    pb3=4.0
+    rcut3=1.5
+    rcut120=rcut1**20.0
+    rcut220=rcut2**20.0
+    rcut320=rcut3**20.0
+    delb16=delb1**6.0
+    delb26=delb2**6.0
+    delb36=delb3**6.0
+    delb14=delb1**4.0
+    delb24=delb2**4.0
+    delb34=delb3**4.0
    
    #************************************************************
    # More Definitions
    
-   num2=num*2
-   gum=num-1
+    num2=num*2
+    gum=num-1
    
    #l0 is the wavelength, in cm
-   l0= lambda_in*1e-4
+    l0= lambda_in*1e-4
    
    # some math we can do now to make the Bnu calculation faster 
-   chk=2.0*(kb**3.0)/((cc*hp)**2.0)
-   hnuok=hp*(cc/l0)/kb
+    chk=2.0*(kb**3.0)/((cc*hp)**2.0)
+    hnuok=hp*(cc/l0)/kb
    
    # radsolar is the radius of the sum in cm
-   radsolar=6.96d10
+    radsolar=6.96e10
    
    # rstarcm is the radius of the star in cm
-   rstarcm=radsolar*rstar
+    rstarcm=radsolar*rstar
    
    # rstarau is the radius of the star in AU
-   rstarau=rstarcm/1.49597d13
+    rstarau=rstarcm/1.49597e13
    
-   deltax=offsetx/stepau
-   deltay=offsety/stepau
-   deltaz=offsetz/stepau
+    deltax=offsetx/stepau
+    deltay=offsety/stepau
+    deltaz=offsetz/stepau
    
    # make sure earthlong is between 0 & 2*pi
-   earthlong=(earthlong*numpy.pi/180.0) numpy.mod pi2
-   if earthlong < 0: 
-	  earthlong = earthlong + pi2
+    earthlong=(earthlong*numpy.pi/180.0) % pi*2
+    if earthlong < 0:
+        earthlong = earthlong + pi2
    
    # Calculate Bnu for the star
-   xb=hnuok/tstar
-   bnus=(tstar**3.0)*chk*xb**3.0/(numpy.exp(xb)-1.0)
+    xb=hnuok/tstar
+    bnus=(tstar**3.0)*chk*xb**3.0/(numpy.exp(xb)-1.0)
    
-   starfactor=numpy.pi * bnus * rstarau*rstarau/(stepau*stepau)
+    starfactor=numpy.pi * bnus * rstarau*rstarau/(stepau*stepau)
    
    #**********************************************************
    # Make some geometrical calulations 
-   print('Doing some geometry')
+    print('Doing some geometry')
    
-   c0=numpy.cos(pos*numpy.pi/180.0 )
-   s0=numpy.sin(pos*numpy.pi/180.0 )
-   c1=numpy.cos(inc*numpy.pi/180.0)
-   s1=numpy.sin(inc*numpy.pi/180.0)
-   c2=numpy.cos(0.5*numpy.pi + earthlong)
-   s2=numpy.sin(0.5*numpy.pi + earthlong)
+    c0=numpy.cos(pos*numpy.pi/180.0 )
+    s0=numpy.sin(pos*numpy.pi/180.0 )
+    c1=numpy.cos(inc*numpy.pi/180.0)
+    s1=numpy.sin(inc*numpy.pi/180.0)
+    c2=numpy.cos(0.5*numpy.pi + earthlong)
+    s2=numpy.sin(0.5*numpy.pi + earthlong)
    
-   inu=numpy.zeroes(num2, num2)
+    inu=numpy.zeroes(num2, num2)
    
    # Do the spherically symmetric part of the physics.
-   print, 'Calculating spherically symmetric factors'
+    print('Calculating spherically symmetric factors')
    
    # make a vector that contains bnu as a function of radius,
    # sampled every 1/5 of a radial step
-   raus=numpy.arange(num*9.0)*stepau/5.0 > 1e-8 # 9 is roughly 5 times sqrt(2)
+    raus=numpy.arange(num*9.0)*stepau/5.0 > 1e-8 # 9 is roughly 5 times sqrt(2)
    
-   if userdustsize == None:
-	  print, 'Calculating the equilibrium temperature of the dust'
-	  temperaturecalc, lstar, tstar, userdustsize, raus, t, lambdaQabs, emit
-   else:
-	  t = T0 * raus**(-delta)* (lstar**(delta/2.0))
+    if userdustsize == None:
+        print('Calculating the equilibrium temperature of the dust')
+	  #temperaturecalc, lstar, tstar, userdustsize, raus, t, lambdaQabs, emit
+    else:
+        t = T0 * raus**(-delta)* (lstar**(delta/2.0))
    #Calculate Planck spectrum Bnu (erg s**-1 cm**-2 ster**-1 Hz**-1)
-   bnu=hnuok/t
-   bnu=(t**3.0)*chk*bnu**3.0/(numpy.exp(bnu)-1.0)
-   t=0
+    bnu=hnuok/t
+    bnu=(t**3.0)*chk*bnu**3.0/(numpy.exp(bnu)-1.0)
+    t=0
 	
    # compute a spherically symmetric factor from the number density
-   spherefactor=raus**(-alpha) 
-   if nofan == None: 
-	  spherefactor=spherefactor*0.0
+    spherefactor=raus**(-alpha)
+    if nofan == None:
+        spherefactor=spherefactor*0.0
    
    # Fill arrays with y & z values
-   yarray=numpy.zeroes(num2, num2, /nozero) 
-   zarray=yarray
+    yarray=numpy.zeroes(num2, num2, /nozero)
+    zarray=yarray
    #for i in range(0, num2):
-   yarray(i,*)=i+0.5-num
-   zarray(*,i)=i+0.5-num
+    yarray(i,*)=i+0.5-num
+    zarray(*,i)=i+0.5-num
    
    # do some math with these matrices for the coordinate transformation
-   trans1=-(s0*c1*c2 + c0*s2)*yarray + s1*c2*zarray + c2*deltax -s2* deltay
-   trans2=-(s0*c1*s2 - c0*c2)*yarray + s1*s2*zarray + s2*deltax +c2*deltay
-   trans3=s0*s1*yarray + c1*zarray+deltaz
+    trans1=-(s0*c1*c2 + c0*s2)*yarray + s1*c2*zarray + c2*deltax -s2* deltay
+    trans2=-(s0*c1*s2 - c0*c2)*yarray + s1*s2*zarray + s2*deltax +c2*deltay
+    trans3=s0*s1*yarray + c1*zarray+deltaz
    
-   print('Calculating azimuthally symmetric factors.')
-   zetas=numpy.arange(1001)/1000.0   # zeta goes from 0 to 1 in steps of 0.001 
-   if iras == None:
-	  azimuthterms=numpy.exp(-beta*(zetas**gamma))  # use for IRAS
-	else:
+    print('Calculating azimuthally symmetric factors.')
+    zetas=numpy.arange(1001)/1000.0   # zeta goes from 0 to 1 in steps of 0.001
+    if iras == None:
+        azimuthterms=numpy.exp(-beta*(zetas**gamma))  # use for IRAS
+    else:
    # DIRBE
-	  g= abs(zetas)-(mu/2.0)
-	  smallz=(zetas < mu).nonzero()	#
-	  smallz = smallz[0]
-	  g(smallz)=(zetas(smallz)**2.0)/(2.0*mu) 
-	  azimuthterms=numpy.exp(-beta*(g**gamma))  
+        g= abs(zetas)-(mu/2.0)
+        smallz=(zetas < mu).nonzero()	#
+        smallz = smallz[0]
+        g(smallz)=(zetas(smallz)**2.0)/(2.0*mu)
+        azimuthterms=numpy.exp(-beta*(g**gamma))
    
    g=0 
    smallz=0

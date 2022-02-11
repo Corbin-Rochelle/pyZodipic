@@ -85,19 +85,19 @@ def xthermalzodimodel(lstar, tstar, num, inu, stepau, inc, lambda_in, radin, rad
     sphereterms=sphereterms*raus**(-alpha)
    
    # get rid of the dust outside of radout & inside of radin
-    tin=(radin*5.0/stepau) > 0.0
+    stin=(radin*5.0/stepau) > 0.0
     stout=(radout*5.0/stepau) < (num*9.0)-1
-    sphereterms(0:stin)=0
-    sphereterms(stout:(num*9.0)-1)=0
+    sphereterms[0:stin]=0
+    sphereterms[stout:(num*9.0)-1]=0
    
    # Fill arrays with x & z values
     xarray=numpy.zeroes(num2, num, /nozero) #???
     zarray=xarray
    #for i in range(0, num2):
-    xarray(i,*)=i+0.5-num
+    xarray[i,*]=i+0.5-num
    
     for i in range(0, num):
-        zarray(*,i)=i+0.5-num
+        zarray[*,i]=i+0.5-num
         zetacloud=abs(-c2*xarray + c1*zarray)
         xsquaredpluszsquared=xarray**2.0+zarray**2.0
    
@@ -111,7 +111,7 @@ def xthermalzodimodel(lstar, tstar, num, inu, stepau, inc, lambda_in, radin, rad
         g= abs(zetas)-(mu/2.0)
         smallz=(zetas < mu).nonzero()	#
         smallz = smallz[0]
-        g(smallz)=(zetas(smallz)**2.0)/(2.0*mu)
+        g[smallz]=(zetas(smallz)**2.0)/(2.0*mu)
         azimuthterms=numpy.exp(-beta*(g**gamma))
    
     g=0
@@ -140,12 +140,12 @@ def xthermalzodimodel(lstar, tstar, num, inu, stepau, inc, lambda_in, radin, rad
 	  # clear out center of cube for iteration, if necessary
         if scube != 0 & i > gum-scube :
             gscube=scube-1
-        cloud(gum-gscube:num+gscube, gum-gscube:gum)=0.0
+        cloud[gum-gscube:num+gscube, gum-gscube:gum]=0.0
 	  
 	  # Now integrate the emission along lines of sight
-        inu(*,i)=stepau*sum(cloud,2)   # total along the z axis
+        inu[*,i]=stepau*sum(cloud,2)   # total along the z axis
 	  # then reflect the answer to fill out inu
-        inu(*,num:num2-1)=reverse(inu(*,0:gum),2)
+        inu[*,num:num2-1]=reverse(inu(*,0:gum),2)
         inu=inu+reverse(inu)
 	  # Multiply the final answer by the emissivity & the local dust n<sigma>
         inu=inu*em*n0

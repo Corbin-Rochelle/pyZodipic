@@ -110,16 +110,16 @@ def xscatteringzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda
    # get rid of the dust outside of radout & inside of radin
     stin=(radin*5.0/stepau)-1.0 > 0.0
     stout=(radout*5.0/stepau)+1 < num*9.0-1
-    spherefactor(0:stin)=0
-    spherefactor(stout:(num*9.0)-1)=0
+    spherefactor[0:stin]=0
+    spherefactor[stout:(num*9.0)-1]=0
    
    
    # Fill arrays with y & z values
     yarray=numpy.zeroes(num2, num2, /nozero)
     zarray=yarray
    #for i in range(0, num2):
-    yarray(i,*)=i+0.5-num
-    zarray(*,i)=i+0.5-num
+    yarray[i,*]=i+0.5-num
+    zarray[*,i]=i+0.5-num
    
    # Now do the azimuthally symmetric part
    
@@ -133,7 +133,7 @@ def xscatteringzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda
         g= abs(zetas)-(mu/2.0)
         smallz=(zetas < mu).nonzero()	#
         smallz = smallz[0]
-        g(smallz)=(zetas(smallz)**2.0)/(2.0*mu)
+        g[smallz]=(zetas(smallz)**2.0)/(2.0*mu)
         azimuthterms=numpy.exp(-beta*(g**gamma))
    
     g=0
@@ -169,7 +169,7 @@ def xscatteringzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda
 	  # double check that dust interior to radin is gone
             places=(rsteps < radin/stepau).nonzero()	#
             places = places[0]
-            if places[0] != -1: cloud(places)=0.0
+            if places[0] != -1: cloud[places]=0.0
         else:
 	  # no scattered light
             cloud=spherefactor(rsteps*5.0)*azimuthterms(zeta*1000.0)*em*bnu(rsteps*5.0)
@@ -177,20 +177,21 @@ def xscatteringzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda
 	  # clear out center of cube for iteration, if necessary
         if scube != 0 & i > gum-scube & i < num+scube :
             gscube=scube-1
-            cloud(gum-gscube:num+gscube, gum-gscube:num+gscube)=0.0
-   
+            cloud[gum-gscube:num+gscube, gum-gscube:num+gscube]=0.0
+
 	  # Now integrate the emission along lines of sight
-        inu(i,*)=stepau*total(cloud,2)
+        inu[i,len(inu)]=stepau*sum(cloud,2)
+        # ITERATE ALONG THE ENTIRE COLUMN
 	  
 	  # then reflect the answer over the vertical axis to fill out inu
-        if scatterflag == 1 :
+        if scatterflag == 1:
 	  # scattered light only
-            inu(num:num2-1,*)=reverse(inu(0:gum,*),1)
+            inu[num:num2-1,len(inu)]=numpy.fliplr(inu(0:gum,len(inu)),1)
         else:
 	  # thermal light + position angle only
-            inu(num:num2-1,*)=rotate(inu(0:gum,*),2)
+            inu[num:num2-1,len(inu)]=numpy.rot90(inu(0:gum,len(inu)),2)
 	  # Multiply the final answer by the local dust n<sigma>
         inu=inu*n0
-        inu=rotate(inu,3)  # make positionangle=0 North
+        inu=numpy.rot90(inu,3)  # make positionangle=0 North
    
     return
