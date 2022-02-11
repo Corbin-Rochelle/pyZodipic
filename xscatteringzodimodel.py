@@ -5,7 +5,7 @@ import numpy
 Description of code here.
 '''
 
-def xscatteringzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in, radin, radout, pfunc500, Qabsuser, emit, lambdaQabs, albedo=albedo, iras=iras, scatterflag=scatterflag, useralpha=useralpha, userdelta=userdelta, scube=scube, userdustsize=userdustsize):
+def xscatteringzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in, radin, radout, pfunc500, Qabsuser, emit, lambdaQabs, albedo, iras, scatterflag, useralpha, userdelta, scube, userdustsize):
 
    # fundamental constants
     pi=3.141592
@@ -117,9 +117,9 @@ def xscatteringzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda
    # Fill arrays with y & z values
     yarray=numpy.zeroes(num2, num2, /nozero)
     zarray=yarray
-   #for i in range(0, num2):
-    yarray[i,*]=i+0.5-num
-    zarray[*,i]=i+0.5-num
+    for i in range(0, num2):
+        yarray[i,0:len(yarray)]=i+0.5-num
+        zarray[0:len(zarray),i]=i+0.5-num
    
    # Now do the azimuthally symmetric part
    
@@ -186,10 +186,10 @@ def xscatteringzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda
 	  # then reflect the answer over the vertical axis to fill out inu
         if scatterflag == 1:
 	  # scattered light only
-            inu[num:num2-1,len(inu)]=numpy.fliplr(inu(0:gum,len(inu)),1)
+            inu[num:num2-1,len(inu)]=numpy.fliplr(inu(0:gum,0:len(inu)),1)
         else:
 	  # thermal light + position angle only
-            inu[num:num2-1,len(inu)]=numpy.rot90(inu(0:gum,len(inu)),2)
+            inu[num:num2-1,len(inu)]=numpy.rot90(inu(0:gum,0:len(inu)),2)
 	  # Multiply the final answer by the local dust n<sigma>
         inu=inu*n0
         inu=numpy.rot90(inu,3)  # make positionangle=0 North

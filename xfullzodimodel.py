@@ -176,11 +176,11 @@ def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in, r
         spherefactor=spherefactor*0.0
    
    # Fill arrays with y & z values
-    yarray=numpy.zeroes(num2, num2, /nozero)
+    yarray=numpy.zeroes(num2, num2)
     zarray=yarray
-   #for i in range(0, num2):
-    yarray(i,*)=i+0.5-num
-    zarray(*,i)=i+0.5-num
+    for i in range(0, num2):
+        yarray[i,0:len(yarray)]=i+0.5-num
+        zarray[0:len(zarray),i]=i+0.5-num
    
    # do some math with these matrices for the coordinate transformation
     trans1=-(s0*c1*c2 + c0*s2)*yarray + s1*c2*zarray + c2*deltax -s2* deltay
@@ -196,95 +196,95 @@ def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in, r
         g= abs(zetas)-(mu/2.0)
         smallz=(zetas < mu).nonzero()	#
         smallz = smallz[0]
-        g(smallz)=(zetas(smallz)**2.0)/(2.0*mu)
+        g[smallz]=(zetas(smallz)**2.0)/(2.0*mu)
         azimuthterms=numpy.exp(-beta*(g**gamma))
    
-   g=0 
-   smallz=0
-   zetas=0
+    g=0
+    smallz=0
+    zetas=0
    # save memory
    
-   print, 'Countdown'
+    print('Countdown')
    #*****************************************************************
-   for i in range(0, num2):
-	  count=int(((num2-1)-i)/10.0)
-	  if ((num2-1)-i)/10.0 == count: 
-		 print, -count
-	  x=i+0.5-num
+    for i in range(0, num2):
+        count=int(((num2-1)-i)/10.0)
+        if ((num2-1)-i)/10.0 == count:
+            print(-count)
+        x=i+0.5-num
    
    # do some serious geometry
    # start calculating the cosine of the scattering angle
-	  costheta=zarray*zarray   # not really costheta yet
+        costheta=zarray*zarray   # not really costheta yet
    # rsteps will be the distance to the star in steps!
-	  rsteps=costheta+x*x+yarray*yarray > 1e-8   # actually this is rsteps squared
+        rsteps=costheta+x*x+yarray*yarray > 1e-8   # actually this is rsteps squared
    # grab the local starlight while we have rsteps squared
-	  starlight=starfactor/rsteps  # like I said, it's really rsteps**2
-	  rsteps=numpy.sqrt(rsteps) > 1e-8    #  ah there we go...now it's rsteps
-	  costheta=zarray/rsteps < 0.999999 # now we have the cosine of scattering angle
+        starlight=starfactor/rsteps  # like I said, it's really rsteps**2
+        rsteps=numpy.sqrt(rsteps) > 1e-8    #  ah there we go...now it's rsteps
+        costheta=zarray/rsteps < 0.999999 # now we have the cosine of scattering angle
    
-	  x3=(c0*c1*c2 - s0*s2)*x + trans1
-	  y3=(c0*c1*s2 + s0*c2)*x + trans2
-	  z3=-c0*s1*x + trans3
+        x3=(c0*c1*c2 - s0*s2)*x + trans1
+        y3=(c0*c1*s2 + s0*c2)*x + trans2
+        z3=-c0*s1*x + trans3
    
-	  z3=abs(z3)
-	  rstepst=sqrt(x3*x3+y3*y3+z3*z3)
-	  zeta=abs(z3/rstepst)
+        z3=abs(z3)
+        rstepst=numpy.sqrt(x3*x3+y3*y3+z3*z3)
+        zeta=abs(z3/rstepst)
    
-	  raut=stepau*rstepst  # in units of AU
-	  if ring != 0 | bands != 0:
-		 zaut=stepau*z3 # in units of AU
+        raut=stepau*rstepst  # in units of AU
+        if ring != 0 | bands != 0:
+            zaut=stepau*z3 # in units of AU
    
    # make an array to put the numberdensity of the ring, wake + bands in
-	  nd=zarray*0.0  
+        nd=zarray*0.0
    
-	  if ring != 0 :
+        if ring != 0 :
    # Add the Earth Ring
-		 nd=nd+ring*nsr*numpy.exp(-(((raut-rsr)**2.0)/(sigrsr2) + zaut/sigzsr ))
+            nd=nd+ring*nsr*numpy.exp(-(((raut-rsr)**2.0)/(sigrsr2) + zaut/sigzsr ))
    
-		 if blob != 0 :
-   # Add the Earth Blob
+        if blob != 0 :
+    # Add the Earth Blob
    # no inclination | delta
    # We're going to need this angle
-		 deltahel=numpy.atan(y3,x3)
-		 dhel=heltb-deltahel
-		 places=(dhel > numpy.pi).nonzero()	#
-		 places = places[0]
-	  if places[0] != -1: dhel(places)=dhel(places) - pi2
-		 nd=nd+blob*ntb*numpy.exp(-(((raut-rtb)**2.0)/(sigrtb2)+zaut/sigztb+(dhel*dhel/(2.0*sigheltb2)) ))
+            deltahel=numpy.atan(y3,x3)
+            dhel=heltb-deltahel
+            places=(dhel > numpy.pi).nonzero()	#
+            places = places[0]
+        if places[0] != -1: dhel[places]=dhel[places] - pi2
+        nd=nd+blob*ntb*numpy.exp(-(((raut-rtb)**2.0)/(sigrtb2)+zaut/sigztb+(dhel*dhel/(2.0*sigheltb2)) ))
    
    # Add the dust bands
-	  if bands != 0 :
+        if bands != 0 :
    #print, 'Adding the Dust Bands'
-		 zau6=zaut**6.0
-		 zau4=zaut**4.0
-		 rau20=raut**20.0
-		 nd=nd+3.0*bands*nb1*numpy.exp(-(zau6/delb16))*(vb1+(zau4/delb14))*(1.0-numpy.exp(-(rau20/rcut120)))
-		 nd=nd+3.0*bands*nb2*numpy.exp(-(zau6/delb26))*(vb2+(zau4/delb24))*(1.0-numpy.exp(-(rau20/rcut220)))
-		 nd=nd+3.0*bands*nb3*numpy.exp(-(zau6/delb36))*(vb3+(zau4/delb34))*(1.0-numpy.exp(-(rau20/rcut320)))
+            zau6=zaut**6.0
+            zau4=zaut**4.0
+            rau20=raut**20.0
+            nd=nd+3.0*bands*nb1*numpy.exp(-(zau6/delb16))*(vb1+(zau4/delb14))*(1.0-numpy.exp(-(rau20/rcut120)))
+            nd=nd+3.0*bands*nb2*numpy.exp(-(zau6/delb26))*(vb2+(zau4/delb24))*(1.0-numpy.exp(-(rau20/rcut220)))
+            nd=nd+3.0*bands*nb3*numpy.exp(-(zau6/delb36))*(vb3+(zau4/delb34))*(1.0-numpy.exp(-(rau20/rcut320)))
 		 
-	  if scatterflag == 1:
+        if scatterflag == 1:
    # compute scattered light
    # put it all together
-		 cloud=(spherefactor[rstepst*5.0]*azimuthterms(zeta*1000.0)*n0+nd)*(em*bnu(rsteps*5.0) + al*starlight*pfunc500(costheta*500.0))
-	  else:
+            cloud=(spherefactor[rstepst*5.0]*azimuthterms(zeta*1000.0)*n0+nd)*(em*bnu(rsteps*5.0) + al*starlight*pfunc500(costheta*500.0))
+        else:
    # no scattered light
-		 cloud=(spherefactor[rstepst*5.0]*azimuthterms(zeta*1000.0)*n0+nd)*(em*bnu(rsteps*5.0))
+            cloud=(spherefactor[rstepst*5.0]*azimuthterms(zeta*1000.0)*n0+nd)*(em*bnu(rsteps*5.0))
    
    # get rid of dust interior to radin & exterior to radout
-	  places=(raut < radin).nonzero()	#
-	  places = places[0]
-	  if places[0] != -1: 
-		 cloud(places)=0.0
-	  places=(raut > radout).nonzero()	#
-	  places = places[0]
-	  if places[0] != -1: 
-		 cloud(places)=0.0
+        places=(raut < radin).nonzero()	#
+        places = places[0]
+        if places[0] != -1:
+            cloud[places]=0.0
+        places=(raut > radout).nonzero()	#
+        places = places[0]
+        if places[0] != -1:
+            cloud[places]=0.0
    
    # clear out center of cube for iteration, if necessary
-	  if scube != 0 & i > gum-scube & i < num+scube :
-		 gscube=scube-1
-		 cloud(gum-gscube:num+gscube, gum-gscube:num+gscube)=0.0
+        if scube != 0 & i > gum-scube & i < num+scube :
+            gscube=scube-1
+            cloud[gum-gscube:num+gscube, gum-gscube:num+gscube]=0.0
 		 
    # Now integrate the emission along lines of sight
-	  inu(i,*)=stepau*total(cloud,2) 
-return
+        inu[i,len(inu)]=stepau*sum(cloud,2)
+    return

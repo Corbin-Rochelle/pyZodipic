@@ -77,11 +77,11 @@ def xusermapzodimodel(lstar, tstar, rstar, num, inu, stepau, lambda_in, radin, p
 #temperature, then bnu at that position
     print('generating emission map from the dust density map...')
     x = [numpy.arange(num)+0.5]*stepau
-    y = make_array(num, /float, value = 1.0)
+    y = make_array(num, value = 1.0)
     plane = x#y
     plane = plane**2.0+[transpose(plane)]**2.0
     plane=[[rotate(plane,2),rotate(plane,3)],[rotate(plane,1),plane]]
-    cube = make_array(num2, num2, num2, /float, value = 1.0)
+    cube = make_array(num2, num2, num2, value = 1.0)
     for i in range(0, num-1):
         cube[num-i-1, *, *] =plane[*, *]+[stepau*[float(i)+0.5]]**2.0
         cube[num+i, *, *] = cube[num-i-1, *, *]

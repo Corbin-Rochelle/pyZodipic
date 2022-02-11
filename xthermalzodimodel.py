@@ -93,11 +93,11 @@ def xthermalzodimodel(lstar, tstar, num, inu, stepau, inc, lambda_in, radin, rad
    # Fill arrays with x & z values
     xarray=numpy.zeroes(num2, num, /nozero) #???
     zarray=xarray
-   #for i in range(0, num2):
-    xarray[i,*]=i+0.5-num
+    for i in range(0, num2):
+        xarray[i,0:len(xarray)]=i+0.5-num
    
     for i in range(0, num):
-        zarray[*,i]=i+0.5-num
+        zarray[0:len(zarray),i]=i+0.5-num
         zetacloud=abs(-c2*xarray + c1*zarray)
         xsquaredpluszsquared=xarray**2.0+zarray**2.0
    
@@ -143,10 +143,10 @@ def xthermalzodimodel(lstar, tstar, num, inu, stepau, inc, lambda_in, radin, rad
         cloud[gum-gscube:num+gscube, gum-gscube:gum]=0.0
 	  
 	  # Now integrate the emission along lines of sight
-        inu[*,i]=stepau*sum(cloud,2)   # total along the z axis
+        inu[0:len(inu),i]=stepau*sum(cloud,2)   # total along the z axis
 	  # then reflect the answer to fill out inu
-        inu[*,num:num2-1]=reverse(inu(*,0:gum),2)
-        inu=inu+reverse(inu)
+        inu[0:len(inu),num:num2-1]=numpy.flipud(inu[0:len(inu),0:gum],2)
+        inu=inu+numpy.fliplr(inu)
 	  # Multiply the final answer by the emissivity & the local dust n<sigma>
         inu=inu*em*n0
     return

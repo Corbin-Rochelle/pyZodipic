@@ -25,12 +25,12 @@ r=shift(dist(6),3,3)
 repeat begin
 zodipic, fnu, 60, lambda_in(x), pixnum=128, nodisplay=1, dustsize=1, $
     radin=1, radout=10, starname='Beta_Pictoris', inc=80, zodis=125,alpha=0
-nu=0.63*r/lambda(x)
+nu=0.63*r/lambda_in(x)
 J_one=beselj(nu,1)
 PSF=(2*J_one/nu)**2
 PSF[3,3]=1
 k=convol(fnu,PSF)
-fluxtemp=total(k)
+fluxtemp=sum(k)
 #fluxtemp=total(fnu[120:127,*])
 fluxtot(x)=fluxtemp
 x=x+1
@@ -41,18 +41,18 @@ fnu=0
 y=0
 #Flux without star
 repeat begin
-zodipic, fnu, 60, lambda(y), pixnum=128, nodisplay=1, dustsize=10, $
+zodipic, fnu, 60, lambda_in(y), pixnum=128, nodisplay=1, dustsize=10, $
     radin=10, radout=1000, starname='Beta_Pictoris', inc=80, zodis=3000
-nu=0.63*r/lambda(y)
+nu=0.63*r/lambda_in(y)
 J_one=beselj(nu,1)
 PSF=(2*J_one/nu)**2
 PSF[3,3]=1
 m=convol(fnu,PSF)
-fluxtemp1=total(m)
+fluxtemp1=sum(m)
 #fluxtemp1=total(fnu[120:127,*])
 fluxtot1(y)=fluxtemp1
 y=y+1
-endrep until lambda(y) == 100
+endrep until lambda_in(y) == 100
 
 
 fluxtot3=fluxtot1+fluxtot
@@ -82,9 +82,9 @@ save, filename='Fluxtot_2comp1_0.dat', fluxtot3, fluxtot1, fluxtot, lambda, flux
 #device, filename='BetaPicComp6.ps'
 
 #window,0,color=2,title='Plots'
-plot_oo, lambda, fluxtot3, xtitle='Wavelength (!7l!3m)', xstyle=1,$
-    ytitle='Total Flux (Jy)',linestyle=0, xr=[1,110],yr=[1e-4,100],$
-    title='Beta Pic Spectra:Inner Dust size 1!7l!3m, Outer=100!7l!3m'
+plot_oo, lambda_in, fluxtot3, xtitle='Wavelength (!7l!3m)', xstyle=1,
+ytitle='Total Flux (Jy)',linestyle=0, xr=[1,110],yr=[1e-4,100],
+title='Beta Pic Spectra:Inner Dust size 1!7l!3m, Outer=100!7l!3m'
 #ploterror,wavelengths,spectra[*,9],uncertainties[*,9],$
 #xtitle='Wavelength (!7l!3m)', ytitle='Flux (Jy)', title='Beta Pic Spectra 3.6 arcsec'
 
