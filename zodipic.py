@@ -296,7 +296,7 @@ def zodipic():
    # even if the output is to be smaller than that
         if pixnum < 112.0:
             oversample=int(112.0/pixnum)+1
-        upixnum=pixnum*oversample
+            upixnum=pixnum*oversample
         else:
        # default grid size
             pixnum=144
@@ -305,7 +305,7 @@ def zodipic():
 #if using a dustmap, then adjust its size to match upixnum
     if (userdustmap is None):
         tot = sum(userdustmap)
-        mapsize = len(userdustmap, /dimensions)
+        mapsize = len(userdustmap)
         userdustmap = congrid(userdustmap, upixnum, upixnum, upixnum)##NNED TO FIXXXXXXXXX
        #making sure the total number density remains the same
         userdustmap = userdustmap*tot/sum(userdustmap)
@@ -319,18 +319,18 @@ def zodipic():
     gum=num-1
     pixsize=float(pixsize)
     radin=float(radin)
-   radout=float(radout)
-   stepau=pixsize*udist/(1000.0*oversample)
+    radout=float(radout)
+    stepau=pixsize*udist/(1000.0*oversample)
 
-   if 1.415*num*stepau < radin :
-       print('''\n'
+    if 1.415*num*stepau < radin :
+        print('''\n'
         *************************************************\n
            You are looking into the disk's central hole.\n
         *************************************************\n
         \n''')
    
    
-   if num*stepau > 3.0*radout :
+    if num*stepau > 3.0*radout :
        print('''\n'
         *************************************************\n
            The disk is much smaller than the frame.\n
@@ -338,68 +338,68 @@ def zodipic():
         \n''')
 
    #l0 is the wavelength, in cm
-   lambda_in=float(lambda_in)
-   l0= lambda_in*1e-4
-   print('Wavelength in microns: ', lambda_in)
+    lambda_in=float(lambda_in)
+    l0= lambda_in*1e-4
+    print('Wavelength in microns: ', lambda_in)
 
    # add scattered light if the wavelength is less than this value (in microns)
-   scatterwavelength=4.2 # microns
+    scatterwavelength=4.2 # microns
    #*****************************************************
    # Find the radius where the dust sublimates
-   delta=0.467
-   T0=286.0
-   if (iras is None) :
-       T0=266.20
-       delta=0.359
+    delta=0.467
+    T0=286.0
+    if (iras is None) :
+        T0=266.20
+        delta=0.359
    
-   tsublime=1500.0
-   lambdaQabs=numpy.zeroes(112)
-   a=numpy.zeroes(21)
-   Qabs=numpy.zeroes(21,112)
-   restore, 'QabsVars.dat'#################FIX
+    tsublime=1500.0
+    lambdaQabs=numpy.zeroes(112)
+    a=numpy.zeroes(21)
+    Qabs=numpy.zeroes(21,112)
+    restore, 'QabsVars.dat'#################FIX
 
-   if (userdustsize is None) :
-       print('Finding the radius the dust sublimates.')
+    if (userdustsize is None) :
+        print('Finding the radius the dust sublimates.')
        # start at a little beyond two times the sublimation radius of a blackbody
-       logsubrau=numpy.log10(2.1*(ulstar**0.5)*(T0/tsublime)**2.0)
-       rok=0
+        logsubrau=numpy.log10(2.1*(ulstar**0.5)*(T0/tsublime)**2.0)
+        rok=0
        # work our way inwards till the dust temperature (tgrain)
        # exceeds the sublimation temperature
-   q=2 # emission
-   emit=numpy.zeroes(112)
+    q=2 # emission
+    emit=numpy.zeroes(112)
 
 # efficiency of absorption
 # If the dust size is greater than 3 microns, the absorption is approximated
 # as a power law, if it is less than 3 microns it gets the appropriate
 # absorption coefficient for each wavelength from QabsCalc.
 
-   if (userdustsize > 3.):
+    if (userdustsize > 3.):
        # effective dust size in microns * factor
-       lambda0=userdustsize*10
-       emit=(lambda0/lambdaQabs)**q < 1.0
-   else:
-      for x in range(0, 111):
-         l=lambdaQabs[x]
-         Qabsreturn = QabsCalc(userdustsize, l, Qabs, lambdaQabs, a)
-         emit[x]=Qabsreturn
-      Qabsreturn = QabsCalc(userdustsize, lambda, Qabs, lambdaQabs, a)
-      Qabsuser=Qabsreturn
+        lambda0=userdustsize*10
+        emit=(lambda0/lambdaQabs)**q < 1.0
+    else:
+        for x in range(0, 111):
+            l=lambdaQabs[x]
+            Qabsreturn = QabsCalc(userdustsize, l, Qabs, lambdaQabs, a)
+            emit[x]=Qabsreturn
+        Qabsreturn = QabsCalc(userdustsize, lambda, Qabs, lambdaQabs, a)
+        Qabsuser=Qabsreturn
 
-   while rok == 0: # loop through radii
-      tgrain = temperaturecalc(ulstar, utstar, userdustsize, 10.0**logsubrau+numpy.zeroes(1),lambdaQabs, emit)
-      tgrain=tgrain[0]  # since rau & t in temperaturecalc are matrices 
-      if tgrain > tsublime:
-         rok=1
-      else:
-         logsubrau=logsubrau-0.008  # no sublimation?  decrease the trial radius by 1.859%
-   rsublime=10.0**(logsubrau)
-   else:
-    rsublime=(ulstar**0.5)*(T0/tsublime)**(1.0/delta)
+    while rok == 0: # loop through radii
+        tgrain = temperaturecalc(ulstar, utstar, userdustsize, 10.0**logsubrau+numpy.zeroes(1),lambdaQabs, emit)
+        tgrain=tgrain[0]  # since rau & t in temperaturecalc are matrices
+        if tgrain > tsublime:
+            rok=1
+        else:
+            logsubrau=logsubrau-0.008  # no sublimation?  decrease the trial radius by 1.859%
+    rsublime=10.0**(logsubrau)
+    else: # WHAT IS THIS
+        rsublime=(ulstar**0.5)*(T0/tsublime)**(1.0/delta)
 #*****************************************************
-   if rsublime > radin :
-      print, 'Dust sublimation temperature:', tsublime, ' K'
-      print, 'Disk inner radius set to', rsublime, ' AU, .nonzero()	#
-      radin=rsublime
+    if rsublime > radin :
+        print('Dust sublimation temperature:', tsublime, ' K')
+        print('Disk inner radius set to', rsublime, ' AU', .nonzero())
+        radin=rsublime
    else:
       print, 'Inner radius, in AU:', radin
    print, 'Outer radius, in AU:', radout
