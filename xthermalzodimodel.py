@@ -91,7 +91,7 @@ def xthermalzodimodel(lstar, tstar, num, inu, stepau, inc, lambda_in, radin, rad
     sphereterms[stout:(num*9.0)-1]=0
    
    # Fill arrays with x & z values
-    xarray=numpy.zeroes(num2, num, /nozero) #???
+    xarray=numpy.zeroes(num2, num) #???
     zarray=xarray
     for i in range(0, num2):
         xarray[i,0:len(xarray)]=i+0.5-num

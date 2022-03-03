@@ -382,7 +382,7 @@ def zodipic():
             l=lambdaQabs[x]
             Qabsreturn = QabsCalc(userdustsize, l, Qabs, lambdaQabs, a)
             emit[x]=Qabsreturn
-        Qabsreturn = QabsCalc(userdustsize, lambda, Qabs, lambdaQabs, a)
+        Qabsreturn = QabsCalc(userdustsize, lambda_in, Qabs, lambdaQabs, a)
         Qabsuser=Qabsreturn
 
     while rok == 0: # loop through radii
@@ -398,26 +398,26 @@ def zodipic():
 #*****************************************************
     if rsublime > radin :
         print('Dust sublimation temperature:', tsublime, ' K')
-        print('Disk inner radius set to', rsublime, ' AU', .nonzero())
+        print('Disk inner radius set to', rsublime, ' AU')
         radin=rsublime
-   else:
-      print, 'Inner radius, in AU:', radin
-   print, 'Outer radius, in AU:', radout
+    else:
+        print('Inner radius, in AU:', radin)
+    print('Outer radius, in AU:', radout)
 
-   if (zodis is not None): 
-      zodis=1.0
-   zodis=float(zodis)
-   print, 'Synthesizing an image of a Solar type zodiacal cloud x', zodis
+    if (zodis is not None):
+        zodis=1.0
+    zodis=float(zodis)
+    print('Synthesizing an image of a Solar type zodiacal cloud x', zodis)
    # Worry about whether the dust will be destroyed by mutual collisons
-   alpha = 1.34
-   n0=1.13e-7
-   ep=1.5-alpha
-   if (userdustsize is None):
-       dustsizecm=dustsize*1e-4
-   else:
-       dustsizecm = (5.0e-4) # 5 microns in diameter
-   dustdensity=3.5 # grams per cc
-   dustpar=3.55e-8/(dustsizecm*dustdensity)
+    alpha = 1.34
+    n0=1.13e-7
+    ep=1.5-alpha
+    if (userdustsize is None):
+        dustsizecm=dustsize*1e-4
+    else:
+        dustsizecm = (5.0e-4) # 5 microns in diameter
+    dustdensity=3.5 # grams per cc
+    dustpar=3.55e-8/(dustsizecm*dustdensity)
 #  Assume dust traverses the scale height of the disk twice per revolution,
 # a is the heliocentric distance, & tau is the optical depth traversed
 # by a dust particle since it was created at radout.
@@ -429,44 +429,44 @@ def zodipic():
 # The integral of dtau/da from a=radout to a=rcoll = 1
 # assume tau0=0.1*n0 * rau**(1-alpha)
 # & do the integral & solve for rcoll
-   freepathpar=dustpar*ep/(0.1*n0*zodis)
-   if freepathpar <= radout**ep :
-      rcoll=(radout**ep-freepathpar)**(1.0/ep)
-      print(' ')
-      print('Heliocentric distance',1.0e4*dustsizecm)
-      print('micron radius dust particle will be detroyed on its way in by a collision with another grain:', rcoll, ' AU')
-         if radin < rcoll: 
-              print('You might want to truncate the disk at this inner radius.')
-   else:
-      rcoll=0.0
+    freepathpar=dustpar*ep/(0.1*n0*zodis)
+    if freepathpar <= radout**ep :
+        rcoll=(radout**ep-freepathpar)**(1.0/ep)
+        print(' ')
+        print('Heliocentric distance',1.0e4*dustsizecm)
+        print('micron radius dust particle will be detroyed on its way in by a collision with another grain:', rcoll, ' AU')
+        if radin < rcoll:
+            print('You might want to truncate the disk at this inner radius.')
+    else:
+        rcoll=0.0
       
-   print, 'Step size=', stepau, ' AU'
+    print('Step size=', stepau, ' AU')
    
-   if (inclination is None):
-      print('Inclination:', inclination, ' degrees from face-on')
-      inclination=float(inclination)
-   else:
-      inclination=0.0
+    if (inclination is None):
+        print('Inclination:', inclination, ' degrees from face-on')
+        inclination=float(inclination)
+    else:
+        inclination=0.0
    
-   if (nofan is None) :
-       if ring == 0 & bands == 0 :
-           print('You selected nofan & turned off the bands & the rings# there will be no dust.')
-           zodis=0 # make sure there's no dust
+    if (nofan is None) :
+        if ring == 0 & bands == 0 :
+            print('You selected nofan & turned off the bands & the rings# there will be no dust.')
+            zodis=0 # make sure there's no dust
         
 #************************************************************
 
    # scatterflag makes sure you run the scattering calculation when you need it
-   scatterflag=0
-   if lambda < scatterwavelength :
-      scatterflag=1
-   if (isotropic is None) :
-       pfunc500=numpy.zeroes(500)+1.0/(4.0*numpy.pi)
+    scatterflag=0
+    if lambda_in < scatterwavelength :
+        scatterflag=1
+    if (isotropic is None) :
+        pfunc500=numpy.zeroes(500)+1.0/(4.0*numpy.pi)
     else:
-       print('Calculating phase function.')
+        print('Calculating phase function.')
    # calculate the phase function for our zodiacal cloud
    # use the information in Hong, S.S. 1985, A&A, 146, 67 & the fact that
    # our zodi has alpha near 1.35
-      pfunc500 = hongphasefunction(1.35)
+        pfunc500 = hongphasefunction(1.35)
    # use some of these lines for the dirbe phase function
    # dirbeband=1 # (1 is 1.25 microns, 2 is 2.2, 3 is 3.5)
    # dirbephasefunction, dirbeband, pfunc500
@@ -476,179 +476,178 @@ def zodipic():
 #get Fnu for the dust
 
 # how much to magnify on each iteration:
-   iterfactor=8.0
+    iterfactor=8.0
 
 # decide how many iterations to do
 # make sure there are at least minpix pixels across radin
-   minpix=14.0
+    minpix=14.0
 # minpix had better be less than upixnum!
 # after one iteration there are radin/stepau steps
 # after maxi iterations, there are iterfactor**maxi times as many
-   maxi = int(numpy.log10(minpix*stepau/radin)/numpy.log10(iterfactor))+1.0
+    maxi = int(numpy.log10(minpix*stepau/radin)/numpy.log10(iterfactor))+1.0
 
 # don't iterate if the user asks you not to
-   if (noiterate is None): 
-      maxi=1
+    if (noiterate is None):
+        maxi=1
 
-   for i in range(1, maxi+1):
+    for i in range(1, maxi+1):
 # Start with the smallest radii & move to
 # larger scales with each iteration.
 # how much we are magnifying by 
-      magfactor=iterfactor**(maxi-i)
-      print(' ')
-      print('Iteration ', i, ' out of ', int(maxi))
-      print('magnification x', int(magfactor))
+        magfactor=iterfactor**(maxi-i)
+        print(' ')
+        print('Iteration ', i, ' out of ', int(maxi))
+        print('magnification x', int(magfactor))
 
 # first shrink whatever we had from last iteration 
 # to our new larger scale
-      if i > 1 :
-         fnuold=scipy.rebin(fnu,upixnum/iterfactor,upixnum/iterfactor)  # i couldn't resist the pun
+        if i > 1 :
+            fnuold=scipy.rebin(fnu,upixnum/iterfactor,upixnum/iterfactor)  # i couldn't resist the pun
 
 # then go get a new image 
 # if we are on the smallest iteration, don't leave a hole
 # in the center
-      scube=upixnum/(2.0*iterfactor)
-      if i == 1: scube=0
+        scube=upixnum/(2.0*iterfactor)
+        if i == 1: scube=0
 
 #shortcut allows you to use faster models for special position angles
-      shortcut=0
-      if ((positionangle numpy.mod 90) == 0):
-         shortcut=1
+        shortcut=0
+        if ((positionangle % 90) == 0):
+            shortcut=1
 #----------ZEROTH CASE
 #this is tailored to handle the case where you supply zodipic with the
 #dust distribution yourself, in the form of a 3D histogram of dust
 #grain number density, stored in the variable 'userdustmap' 
-      fnu = numpy.zeroes(upixnum, upixnum)
-      if(userdustmap is None):
-         xusermapzodimodel, ulstar, utstar, urstar, num, fnu, stepau/magfactor, \
-         lambda, radin, pfunc500, userdustmap, Qabsuser, iras = iras, \
-         scatterflag = scatterflag, useralpha = useralpha, userdelta = userdelta, \
-         userdustsize = userdustsize, lambdaQabs = lambdaQabs, emit = emit, \
-         scaletoflux = scaletoflux
-      else:
+        fnu = numpy.zeroes(upixnum, upixnum)
+        if(userdustmap is None):
+            xusermapzodimodel, ulstar, utstar, urstar, num, fnu, stepau/magfactor, \
+            lambda_in, radin, pfunc500, userdustmap, Qabsuser, iras = iras, \
+            scatterflag = scatterflag, useralpha = useralpha, userdelta = userdelta, \
+            userdustsize = userdustsize, lambdaQabs = lambdaQabs, emit = emit, \
+            scaletoflux = scaletoflux
+        else:
          #----------FIRST CASE
          # use this program for the whole full-on salami with bands, rings etc.
-         if (offsetx != 0) | (offsety != 0) | (offsetz != 0) | (ring != 0) | (bands != 0) | (scatterflag == 1 & shortcut == 0):
-            xfullzodimodel, ulstar, utstar, urstar, num, fnu, stepau/magfactor, \
-            inclination, positionangle, lambda, radin, radout, pfunc500, Qabsuser, emit, lambdaQabs, albedo=albedo, ring, blob,\
-            earthlong, bands, nofan=nofan, offsetx, offsety, offsetz, iras=iras, scatterflag=scatterflag, useralpha=useralpha, \
-            userdelta=userdelta, scube=scube, radring=radring, userdustsize=userdustsize
-         else:
+            if (offsetx != 0) | (offsety != 0) | (offsetz != 0) | (ring != 0) | (bands != 0) | (scatterflag == 1 & shortcut == 0):
+                xfullzodimodel, ulstar, utstar, urstar, num, fnu, stepau/magfactor, \
+                inclination, positionangle, lambda_in, radin, radout, pfunc500, Qabsuser, emit, lambdaQabs, albedo=albedo, ring, blob,\
+                earthlong, bands, nofan=nofan, offsetx, offsety, offsetz, iras=iras, scatterflag=scatterflag, useralpha=useralpha, \
+                userdelta=userdelta, scube=scube, radring=radring, userdustsize=userdustsize
+            else:
              #----------SECOND CASE
-            if (scatterflag == 1 & shortcut == 1) :
+                if (scatterflag == 1 & shortcut == 1) :
+                    positionangle = 0
                # use this program to do position angle = 0 at scattering wavelengths
-               xscatteringzodimodel, ulstar, utstar, urstar, num, fnu, stepau/magfactor, inclination, 0.0, lambda, radin, radout, pfunc500, Qabsuser, emit,lambdaQabs, albedo=albedo, iras=iras, scatterflag=scatterflag, useralpha=useralpha, userdelta=userdelta, scube=scube, userdustsize=userdustsize
-               if positionangle != 0 :
+                    xscatteringzodimodel, ulstar, utstar, urstar, num, fnu, stepau/magfactor, inclination, positionangle, lambda_in, radin, radout, pfunc500, Qabsuser, emit,lambdaQabs, albedo=albedo, iras=iras, scatterflag=scatterflag, useralpha=useralpha, userdelta=userdelta, scube=scube, userdustsize=userdustsize
+                    if positionangle != 0 :
                 # we took the shortcut, but we might still have some rotating to do
                 # it's only by a multiple of 90 degrees, though
-                  fnu=rot(fnu,positionangle) 
+                        fnu=rot(fnu,positionangle)
             #----------THIRD CASE
-            else:
-               if (scatterflag == 0 & shortcut == 0) :
+                else:
+                    if (scatterflag == 0 & shortcut == 0) :
                   # use this program to do position angle rotation for a thermal model
-                  xscatteringzodimodel, ulstar, utstar, urstar, num, fnu, stepau/magfactor, inclination, positionangle, lambda, radin, radout, pfunc500, Qabsuser, emit, lambdaQabs, albedo=albedo, iras=iras, scatterflag=scatterflag, useralpha=useralpha, userdelta=userdelta,scube=scube, userdustsize=userdustsize
-               else:
+                        xscatteringzodimodel, ulstar, utstar, urstar, num, fnu, stepau/magfactor, inclination, positionangle, lambda_in, radin, radout, pfunc500, Qabsuser, emit, lambdaQabs, albedo=albedo, iras=iras, scatterflag=scatterflag, useralpha=useralpha, userdelta=userdelta,scube=scube, userdustsize=userdustsize
+                    else:
                #----------FOURTH CASE
                # fast no-frills, symmetrical, thermal-emission-only model
-                  xthermalzodimodel, ulstar, utstar, num, fnu, stepau/magfactor, inclination, lambda, radin, radout, Qabsuser, emit, lambdaQabs, iras=iras, useralpha=useralpha, userdelta=userdelta, scube=scube, userdustsize=userdustsize
-                  if positionangle != 0 :
+                        xthermalzodimodel, ulstar, utstar, num, fnu, stepau/magfactor, inclination, lambda_in, radin, radout, Qabsuser, emit, lambdaQabs, iras=iras, useralpha=useralpha, userdelta=userdelta, scube=scube, userdustsize=userdustsize
+                        if positionangle != 0 :
                      # we took the shortcut, but we might still have some rotating to do
                      # it's only by a multiple of 90 degrees, though
-                     fnu=rot(fnu,positionangle) 
+                            fnu=rot(fnu,positionangle)
 
 # Compute total flux from this iteration, in Jy
-      if (scaletoflux is not None): #since scaletoflux already in Jy
-         fnuit = sum(fnu)*1e23*((pixsize/oversample)/(magfactor*1000.0*206265.0))**2.0
-      else: 
-         fnuit = sum(fnu)
-      print, 'Flux added this iteration:', fnuit 
+        if (scaletoflux is not None): #since scaletoflux already in Jy
+            fnuit = sum(fnu)*1e23*((pixsize/oversample)/(magfactor*1000.0*206265.0))**2.0
+        else:
+            fnuit = sum(fnu)
+        print('Flux added this iteration:', fnuit)
       # add the old image to the new image
-      if i > 1:
-         gscube=upixnum/(2.0*iterfactor)-1.0
-         print, 'gscube=',gscube
-      fnu[gum-gscube:num+gscube,gum-gscube:num+gscube]=fnu[gum-gscube:num+gscube,gum-gscube:num+gscube]+fnuold
+        if i > 1:
+            gscube=upixnum/(2.0*iterfactor)-1.0
+            print('gscube=',gscube)
+        fnu[gum-gscube:num+gscube,gum-gscube:num+gscube]=fnu[gum-gscube:num+gscube,gum-gscube:num+gscube]+fnuold
    # end i iteration loop
 
-   if (scaletoflux is not None): 
+    if (scaletoflux is not None):
     # Convert disk surface brightness from cgs to Jy/ster
-       fnu=fnu*1e23
+        fnu=fnu*1e23
     # now convert that to Jy
-       fnu=fnu*((pixsize/oversample)/(1000.0*206265.0))**2.0
-       fnu=fnu*zodis
+        fnu=fnu*((pixsize/oversample)/(1000.0*206265.0))**2.0
+        fnu=fnu*zodis
 
-   fdisk=sum(fnu)
-   print, 'Total flux (Jy):', fdisk
+    fdisk=sum(fnu)
+    print('Total flux (Jy):', fdisk)
 
 # if we oversampled, bin back down
-   if upixnum != pixnum :
-       fnu=scipy.rebin(fnu, pixnum, pixnum)
-       fnu=fnu*fdisk/total(fnu)   # make sure that the total flux is correct
+    if upixnum != pixnum :
+        fnu=scipy.rebin(fnu, pixnum, pixnum)
+        fnu=fnu*fdisk/total(fnu)   # make sure that the total flux is correct
 
 
 # redefine num because we are now working again with a 
 # pixnum x pixnum grid
-   num=pixnum/2.0
+    num=pixnum/2.0
 
 #Calculate flux from star from Planck spectrum 
 # Bnu (erg s**-1 cm**-2 ster**-1 Hz**-1)
-   nu = scipy.c/l0
-   xb=scipy.h*nu/(k*utstar)
-   bnu=xb**3.0/(numpy.exp(xb)-1.0)
-   bnu=bnu*2.0*((k*utstar)**3.0)/((scipy.c*scipy.h)**2.0)
+    nu = scipy.c/l0
+    xb=scipy.h*nu/(k*utstar)
+    bnu=xb**3.0/(numpy.exp(xb)-1.0)
+    bnu=bnu*2.0*((k*utstar)**3.0)/((scipy.c*scipy.h)**2.0)
 
-   distcm=udist* (3.085678e18.0) # distance to star in cm
-   fstar = 1e23 * numpy.pi * bnu * ((rstarcm/distcm)**2.0)
+    distcm=udist* (3.085678e18) # distance to star in cm
+    fstar = 1e23 * numpy.pi * bnu * ((rstarcm/distcm)**2.0)
    
-   index=-1
+    index=-1
    # Add star to the image, if required
-   if (addstar is None) :
-       if (2*rstarau) > stepau :
-           print, "Warning: Star is bigger than one pixel."
-           fnu[num-1,num-1]=fnu[num-1,num-1]+fstar/4.0
-           fnu[num,num-1]=fnu[num,num-1]+fstar/4.0
-           fnu[num-1,num]=fnu[num-1,num]+fstar/4.0
-           fnu[num,num]=fnu[num,num]+fstar/4.0
-           print, 'The Stellar flux has been divided evenly among pixels'
-           print, int(num-1), ',', int(num-1)
-           print, int(num), ',', int(num-1)
-           print, int(num-1), ',', int(num)
-           print, int(num), ',', int(num)
+    if (addstar is None) :
+        if (2*rstarau) > stepau :
+            print("Warning: Star is bigger than one pixel.")
+            fnu[num-1,num-1]=fnu[num-1,num-1]+fstar/4.0
+            fnu[num,num-1]=fnu[num,num-1]+fstar/4.0
+            fnu[num-1,num]=fnu[num-1,num]+fstar/4.0
+            fnu[num,num]=fnu[num,num]+fstar/4.0
+            print('The Stellar flux has been divided evenly among pixels')
+            print(int(num-1), ',', int(num-1))
+            print(int(num), ',', int(num-1))
+            print(int(num-1), ',', int(num))
+            print(int(num), ',', int(num))
 
-   print, 'Stellar flux', fstar, ' Jy'
-   if (fstar != 0):
-      print, 'Excess (Disk flux/Stellar Flux)', fdisk/fstar
+    print('Stellar flux', fstar, ' Jy')
+    if (fstar != 0):
+        print('Excess (Disk flux/Stellar Flux)', fdisk/fstar)
 
    # Display the result FIX
    # if the grid is small, make it look bigger
-   case 1 of
-   num <= 9: rfactor=16 
-   (num <= 18) 
-   (num > 9) : rfactor=8
-   #(num <= 37) 
-   (num > 18) : rfactor=8
-   #(num <= 73) 
-   (num > 37) : rfactor=4
-   #(num <= 145) 
-   (num > 73) : rfactor=2
-   #else: rfactor=1
-   endcase
 
-   if pixnum < 600 & (nodisplay is not None) :
-      pic=scipy.rebin(fnu, pixnum*rfactor, pixnum*rfactor, /sample)
-      sz=len(pic)
-      pic=rotate(pic,2)  # to make North up in the display
+    if num <= 9: rfactor=16
+    #(num <= 18)
+    if (num > 9) : rfactor=8
+    #(num <= 37)
+    if (num > 18) : rfactor=8
+   #(num <= 73) 
+    if (num > 37) : rfactor=4
+   #(num <= 145) 
+    if (num > 73) : rfactor=2
+   #else: rfactor=1
+
+
+    if pixnum < 600 & (nodisplay is not None) :
+        pic=scipy.rebin(fnu, pixnum*rfactor, pixnum*rfactor)
+        sz=len(pic)
+        pic=rotate(pic,2)  # to make North up in the display
    
    #DISPLAY
-   wtitle='Surface Brightness'
+    wtitle='Surface Brightness'
    #window, 0, title=wtitle,xsize=sz(1),ysize=sz(2)
    
-   wtitle='Log Surface Brightness'
+    wtitle='Log Surface Brightness'
    #window, 2, title=wtitle,xsize=sz(1),ysize=sz(2)
-   places=(pic > 0).nonzero()	#
-   places = places[0]
-   if places[0] != -1 :
-       amin=min(pic(places))
-       amin=amin > 1e-20
-       pic=pic > amin
-       
-return
+    places=(pic > 0).nonzero()	#
+    places = places[0]
+    if places[0] != -1 :
+        amin=min(pic(places))
+        amin=amin > 1e-20
+        pic=pic > amin
