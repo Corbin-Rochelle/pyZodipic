@@ -83,8 +83,8 @@ def xusermapzodimodel(lstar, tstar, rstar, num, inu, stepau, lambda_in, radin, p
     plane=[[rotate(plane,2),rotate(plane,3)],[rotate(plane,1),plane]]
     cube = make_array(num2, num2, num2, value = 1.0)
     for i in range(0, num-1):
-        cube[num-i-1, *, *] =plane[*, *]+[stepau*[float(i)+0.5]]**2.0
-        cube[num+i, *, *] = cube[num-i-1, *, *]
+        cube[num-i-1, :, :] =plane[:, :]+[stepau*[float(i)+0.5]]**2.0
+        cube[num+i, :, :] = cube[num-i-1, :, :]
     cube = sqrt(cube)
 
    #clear density map within radin
@@ -95,7 +95,7 @@ def xusermapzodimodel(lstar, tstar, rstar, num, inu, stepau, lambda_in, radin, p
         im[indices] = 0.0
    
    #fill with temperatures
-    cube[*, *, *]= t[floor(cube[*, *, *]/stepau*5.0)]
+    cube[:, :, :]= t[floor(cube[:, :, :]/stepau*5.0)]
    
    #scale the density map to match the known flux scaletoflux[0] at the
    #wavelength scaletoflux[1]
