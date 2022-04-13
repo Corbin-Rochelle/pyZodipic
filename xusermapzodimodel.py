@@ -2,7 +2,7 @@
 import numpy
 
 '''
-Description of code here.
+CORBIN: There is an issue with some functions expecting certain data types are recieving a different type instead. 
 '''
 
 def xusermapzodimodel(lstar, tstar, rstar, num, inu, stepau, lambda_in, radin, pfunc500, im, Qabsuser, iras, scatterflag, useralpha, userdelta, userdustsize, lambdaQabs, emit, scaletoflux):
@@ -88,7 +88,7 @@ def xusermapzodimodel(lstar, tstar, rstar, num, inu, stepau, lambda_in, radin, p
     cube = sqrt(cube)
 
    #clear density map within radin
-    indices = [cube[[num-radin-3]:[num+radin+2][num-radin-3]:[num+radin+2] [num-radin-3]:[num+radin+2]] < radin cnt].nonzero()	#
+    indices = [cube[[num-radin-3]:[num+radin+2][num-radin-3]:[num+radin+2] [num-radin-3][num+radin+2]] < radin].nonzero()	#
     indices = indices[0]
     #??= len(indices)
     if cnt != 0:

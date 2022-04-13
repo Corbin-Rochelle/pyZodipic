@@ -10,6 +10,9 @@ import xscatteringzodimodel
 import xthermalzodimodel
 import xusermapzodimodel
 
+'''
+CORBIN: The only errors I can see right now in this are the unresolved references to some values that do not exist. I assumed IDL had a way of finding them in memory but Python does not. 
+'''
 
 #pro zodipic, fnu, pixsize, lambda, inclination=inclination, radin=radin, $
 #    radout=radout, starname=starname, albedo=albedo,
@@ -306,7 +309,7 @@ def zodipic():
     if (userdustmap is None):
         tot = sum(userdustmap)
         mapsize = len(userdustmap)
-        userdustmap = congrid(userdustmap, upixnum, upixnum, upixnum)##NNED TO FIXXXXXXXXX
+        userdustmap = congrid(userdustmap, upixnum, upixnum, upixnum) # CORBIN: There is code online where someone coverted the IDL CONGRID to python.
        #making sure the total number density remains the same
         userdustmap = userdustmap*tot/sum(userdustmap)
         pixsize = pixsize*mapsize[0]/pixnum
@@ -356,7 +359,7 @@ def zodipic():
     lambdaQabs=numpy.zeroes(112)
     a=numpy.zeroes(21)
     Qabs=numpy.zeroes(21,112)
-    restore, 'QabsVars.dat'#################FIX
+    restore, 'QabsVars.dat' #CORBIN: I do not know what restore does and what this file is?
 
     if (userdustsize is None) :
         print('Finding the radius the dust sublimates.')
@@ -393,8 +396,8 @@ def zodipic():
         else:
             logsubrau=logsubrau-0.008  # no sublimation?  decrease the trial radius by 1.859%
     rsublime=10.0**(logsubrau)
-    else: # WHAT IS THIS
-        rsublime=(ulstar**0.5)*(T0/tsublime)**(1.0/delta)
+    #else: # WHAT IS THIS PROBLEM
+        #rsublime=(ulstar**0.5)*(T0/tsublime)**(1.0/delta)
 #*****************************************************
     if rsublime > radin :
         print('Dust sublimation temperature:', tsublime, ' K')
@@ -519,8 +522,9 @@ def zodipic():
 #dust distribution yourself, in the form of a 3D histogram of dust
 #grain number density, stored in the variable 'userdustmap' 
         fnu = numpy.zeroes(upixnum, upixnum)
+        stepauMag = stepau/magfactor
         if(userdustmap is None):
-            xusermapzodimodel, ulstar, utstar, urstar, num, fnu, stepau/magfactor, \
+            xusermapzodimodel, ulstar, utstar, urstar, num, fnu, stepauMag, \
             lambda_in, radin, pfunc500, userdustmap, Qabsuser, iras = iras, \
             scatterflag = scatterflag, useralpha = useralpha, userdelta = userdelta, \
             userdustsize = userdustsize, lambdaQabs = lambdaQabs, emit = emit, \
@@ -529,7 +533,7 @@ def zodipic():
          #----------FIRST CASE
          # use this program for the whole full-on salami with bands, rings etc.
             if (offsetx != 0) | (offsety != 0) | (offsetz != 0) | (ring != 0) | (bands != 0) | (scatterflag == 1 & shortcut == 0):
-                xfullzodimodel, ulstar, utstar, urstar, num, fnu, stepau/magfactor, \
+                xfullzodimodel, ulstar, utstar, urstar, num, fnu, stepauMag, \
                 inclination, positionangle, lambda_in, radin, radout, pfunc500, Qabsuser, emit, lambdaQabs, albedo=albedo, ring, blob,\
                 earthlong, bands, nofan=nofan, offsetx, offsety, offsetz, iras=iras, scatterflag=scatterflag, useralpha=useralpha, \
                 userdelta=userdelta, scube=scube, radring=radring, userdustsize=userdustsize
@@ -538,24 +542,24 @@ def zodipic():
                 if (scatterflag == 1 & shortcut == 1) :
                     positionangle = 0
                # use this program to do position angle = 0 at scattering wavelengths
-                    xscatteringzodimodel, ulstar, utstar, urstar, num, fnu, stepau/magfactor, inclination, positionangle, lambda_in, radin, radout, pfunc500, Qabsuser, emit,lambdaQabs, albedo=albedo, iras=iras, scatterflag=scatterflag, useralpha=useralpha, userdelta=userdelta, scube=scube, userdustsize=userdustsize
+                    xscatteringzodimodel, ulstar, utstar, urstar, num, fnu, stepauMag, inclination, positionangle, lambda_in, radin, radout, pfunc500, Qabsuser, emit,lambdaQabs, albedo=albedo, iras=iras, scatterflag=scatterflag, useralpha=useralpha, userdelta=userdelta, scube=scube, userdustsize=userdustsize
                     if positionangle != 0 :
                 # we took the shortcut, but we might still have some rotating to do
                 # it's only by a multiple of 90 degrees, though
-                        fnu=rot(fnu,positionangle)
+                        fnu=numpy.rot(fnu,positionangle)
             #----------THIRD CASE
                 else:
                     if (scatterflag == 0 & shortcut == 0) :
                   # use this program to do position angle rotation for a thermal model
-                        xscatteringzodimodel, ulstar, utstar, urstar, num, fnu, stepau/magfactor, inclination, positionangle, lambda_in, radin, radout, pfunc500, Qabsuser, emit, lambdaQabs, albedo=albedo, iras=iras, scatterflag=scatterflag, useralpha=useralpha, userdelta=userdelta,scube=scube, userdustsize=userdustsize
+                        xscatteringzodimodel, ulstar, utstar, urstar, num, fnu, stepauMag, inclination, positionangle, lambda_in, radin, radout, pfunc500, Qabsuser, emit, lambdaQabs, albedo=albedo, iras=iras, scatterflag=scatterflag, useralpha=useralpha, userdelta=userdelta,scube=scube, userdustsize=userdustsize
                     else:
                #----------FOURTH CASE
                # fast no-frills, symmetrical, thermal-emission-only model
-                        xthermalzodimodel, ulstar, utstar, num, fnu, stepau/magfactor, inclination, lambda_in, radin, radout, Qabsuser, emit, lambdaQabs, iras=iras, useralpha=useralpha, userdelta=userdelta, scube=scube, userdustsize=userdustsize
+                        xthermalzodimodel, ulstar, utstar, num, fnu, stepauMag, inclination, lambda_in, radin, radout, Qabsuser, emit, lambdaQabs, iras=iras, useralpha=useralpha, userdelta=userdelta, scube=scube, userdustsize=userdustsize
                         if positionangle != 0 :
                      # we took the shortcut, but we might still have some rotating to do
                      # it's only by a multiple of 90 degrees, though
-                            fnu=rot(fnu,positionangle)
+                            fnu=numpy.rot(fnu,positionangle)
 
 # Compute total flux from this iteration, in Jy
         if (scaletoflux is not None): #since scaletoflux already in Jy
@@ -583,7 +587,7 @@ def zodipic():
 # if we oversampled, bin back down
     if upixnum != pixnum :
         fnu=scipy.rebin(fnu, pixnum, pixnum)
-        fnu=fnu*fdisk/total(fnu)   # make sure that the total flux is correct
+        fnu=fnu*fdisk/sum(fnu)   # make sure that the total flux is correct
 
 
 # redefine num because we are now working again with a 
@@ -637,7 +641,7 @@ def zodipic():
     if pixnum < 600 & (nodisplay is not None) :
         pic=scipy.rebin(fnu, pixnum*rfactor, pixnum*rfactor)
         sz=len(pic)
-        pic=rotate(pic,2)  # to make North up in the display
+        pic=numpy.rotate(pic,2)  # to make North up in the display
    
    #DISPLAY
     wtitle='Surface Brightness'
@@ -651,3 +655,5 @@ def zodipic():
         amin=min(pic(places))
         amin=amin > 1e-20
         pic=pic > amin
+
+zodipic()

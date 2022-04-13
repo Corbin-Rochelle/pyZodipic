@@ -2,7 +2,7 @@
 
 
 """
-Description of code here.
+CORBIN: This works as intended.
 """
 
 def stellarparam(starname):

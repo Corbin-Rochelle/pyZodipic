@@ -2,7 +2,7 @@
 import numpy
 
 '''
-Description of code here.
+CORBIN: This seems to be working.
 '''
 def xthermalzodimodel(lstar, tstar, num, inu, stepau, inc, lambda_in, radin, radout, Qabsuser, emit, lambdaQabs, iras, useralpha, userdelta, scube, userdustsize):
 
@@ -125,9 +125,9 @@ def xthermalzodimodel(lstar, tstar, num, inu, stepau, inc, lambda_in, radin, rad
         if (gum-i)/10.0 == count:
             print(-count)
    
-	  # fill a rectangular matrix (cloud) with the distance to the center
-	  # eventually cloud will contain the emission of the model at a given x 
-	    y=i+0.5-num
+        # fill a rectangular matrix (cloud) with the distance to the center
+        # eventually cloud will contain the emission of the model at a given x
+        y=i+0.5-num
         cloud=numpy.sqrt(xsquaredpluszsquared+y*y) > 1e-8
 
 	  # Then make an array with zeta using a rotated z axis

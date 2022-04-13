@@ -37,5 +37,5 @@ n[3]=0.324797
 
 theta=numpy.arccos(costheta)
 
-# What is band and pfunc, and why are they imported.
+# CORBIN: What is band and pfunc, and why are they imported. There is a pfunc500 in zodipic.py.
 pfunc=n(band)*(cs0(band) + cs1(band) * theta + numpy.exp(cs2(band)*theta))

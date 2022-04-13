@@ -163,6 +163,7 @@ def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in, r
     if userdustsize == None:
         print('Calculating the equilibrium temperature of the dust')
 	  #temperaturecalc, lstar, tstar, userdustsize, raus, t, lambdaQabs, emit
+      # CORBIN: I was assuming this is some IDL code to call the values into memory
     else:
         t = T0 * raus**(-delta)* (lstar**(delta/2.0))
    #Calculate Planck spectrum Bnu (erg s**-1 cm**-2 ster**-1 Hz**-1)
@@ -271,12 +272,12 @@ def xfullzodimodel(lstar, tstar, rstar, num, inu, stepau, inc, pos, lambda_in, r
             cloud=(spherefactor[rstepst*5.0]*azimuthterms(zeta*1000.0)*n0+nd)*(em*bnu(rsteps*5.0))
    
    # get rid of dust interior to radin & exterior to radout
-        places=(raut < radin).nonzero()	#
-        places = places[0]
+        places=(raut < radin)
+        places = places[0] # CORBIN: Calling index from a bool?
         if places[0] != -1:
             cloud[places]=0.0
-        places=(raut > radout).nonzero()	#
-        places = places[0]
+        places=(raut > radout)
+        places = places[0] # CORBIN: Calling index from a bool?
         if places[0] != -1:
             cloud[places]=0.0
    

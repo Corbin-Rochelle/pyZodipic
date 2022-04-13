@@ -2,7 +2,7 @@
 import numpy
 
 '''
-Description of code here.
+CORBIN: This seems to be working although some of these are not being used. 
 '''
 
 

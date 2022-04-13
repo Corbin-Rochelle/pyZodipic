@@ -3,7 +3,7 @@ import numpy
 from scipy.ndimage.interpolation import shift
 
 '''
-Description of code here.
+CORBIN: This seems to be working as intended 
 '''
 
 def temperaturecalc(lstar, tstar, lambda0microns, rau, t, lambdaQabs, emit):
@@ -36,7 +36,7 @@ def temperaturecalc(lstar, tstar, lambda0microns, rau, t, lambdaQabs, emit):
     deltanu[111]=0.0
     nu[111]=0.0
     sz=len(rau)
-    raulen=sz(1)
+    raulen=sz
     t=numpy.zeroes(raulen)
    
     for i in range(0, raulen):
@@ -95,6 +95,6 @@ def temperaturecalc(lstar, tstar, lambda0microns, rau, t, lambdaQabs, emit):
    # if we overshot, reduce the step size
         if oldbad != bad:
             tstep=tstep/2.0
-			
+	# CORBIN: what is this i referencing?
     t[i]=tgrain
     return t
